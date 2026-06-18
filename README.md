@@ -64,7 +64,16 @@ npm run ios
 
 ## 📱 Screenshots
 
-*(Add screenshots of your application here)*
+<div align="center">
+  <img src="./docs/screenshots/HomeScreen.png" alt="Home Screen" width="24%" />
+  <img src="./docs/screenshots/ProfileSelectScreen.png" alt="Profile Select Screen" width="24%" />
+  <img src="./docs/screenshots/ProgressScreen.png" alt="Progress Screen" width="24%" />
+  <img src="./docs/screenshots/ProfileScreen.png" alt="Profile Screen" width="24%" />
+</div>
+
+<div align="center">
+  <img src="./docs/screenshots/SettingsScreen.png" alt="Settings Screen" width="24%" />
+</div>
 
 ## 🤝 Contributing
 

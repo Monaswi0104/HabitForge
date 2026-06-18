@@ -83,6 +83,22 @@ export default function HomeScreen({ navigation }: any) {
     }
   };
 
+  const handleNotificationsPress = () => {
+    const habitsWithReminders = todaysHabits.filter(h => h.reminder_time);
+    
+    if (habitsWithReminders.length === 0) {
+      Alert.alert('Notifications', 'No habit reminders scheduled for today.');
+      return;
+    }
+
+    const details = habitsWithReminders.map(h => {
+      const time = new Date(h.reminder_time!).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      return `• ${h.title} at ${time}`;
+    }).join('\n');
+
+    Alert.alert('Today\'s Reminders', details);
+  };
+
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       {/* Header */}
@@ -97,10 +113,12 @@ export default function HomeScreen({ navigation }: any) {
         </View>
         <TouchableOpacity 
           style={[styles.bellBtn, { backgroundColor: theme.surface }]}
-          onPress={() => Alert.alert('Notifications', 'No new notifications right now.')}
+          onPress={handleNotificationsPress}
         >
           <Bell color={theme.text} size={22} />
-          <View style={[styles.bellDot, { borderColor: theme.surface }]} />
+          {todaysHabits.some(h => h.reminder_time) && (
+            <View style={[styles.bellDot, { borderColor: theme.surface }]} />
+          )}
         </TouchableOpacity>
       </View>
 
@@ -231,12 +249,12 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
   greeting: {
-    fontSize: 14,
+    fontSize: 18,
     marginBottom: 4,
-    fontWeight: '500',
+    fontWeight: '600',
   },
   nameTitle: {
-    fontSize: 26,
+    fontSize: 28,
     fontWeight: '700',
     letterSpacing: -0.5,
   },
