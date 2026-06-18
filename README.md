@@ -1,66 +1,26 @@
-# HabitForge 🚀
+<div align="center">
+  <img src="./src/assets/images/logo.png" alt="HabitForge Logo" width="120" />
+  <h1>HabitForge 🚀</h1>
+  <p><b>Level Up Your Life, One Habit at a Time.</b></p>
+  
+  ![React Native](https://img.shields.io/badge/React_Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+  ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+  ![SQLite](https://img.shields.io/badge/SQLite-07405E?style=for-the-badge&logo=sqlite&logoColor=white)
+  ![Android](https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white)
+  ![iOS](https://img.shields.io/badge/iOS-000000?style=for-the-badge&logo=ios&logoColor=white)
+</div>
 
-HabitForge is a powerful, offline-first React Native application designed to help you build positive habits, track your progress, and level up your life. With a sleek UI and dynamic local notifications, maintaining streaks has never been easier!
+<br/>
 
-## ✨ Features
+> **Note**: This is a **Portfolio Project** built to demonstrate expertise in modern React Native development, offline-first architecture, local databases, and complex state management. It is not currently published on the App Store or Google Play.
 
-- **Multi-Profile Support**: Share your device? Create multiple profiles with secure PIN locks so your habits remain private!
-- **Dynamic Heatmaps**: Visually track your daily completion progress through beautiful, Github-style activity heatmaps.
-- **Smart Notifications**: Built-in native alarms (using `react-native-push-notification`) to ensure you never miss a habit. Get reliable drop-down banners even when the app is minimized.
-- **Gamification & XP**: Earn experience points (XP) for completing habits. Level up and earn badges like *Early Bird*, *Consistent*, and *Achiever*!
-- **Offline First**: All your data is securely stored locally on your device using robust SQLite storage. No internet required!
-- **Beautiful UI**: Polished, modern interface with smooth micro-animations powered by Reanimated.
+---
 
-## 🛠 Tech Stack
+## 📖 About The App
 
-- **Framework**: [React Native](https://reactnative.dev) (v0.86.0)
-- **State Management**: [Zustand](https://github.com/pmndrs/zustand)
-- **Navigation**: [React Navigation](https://reactnavigation.org)
-- **Database**: `react-native-sqlite-storage`
-- **Animations**: `react-native-reanimated`
-- **Notifications**: `react-native-push-notification`
-- **Icons**: `lucide-react-native`
+**HabitForge** is a beautiful, fully offline React Native application designed to help you build positive habits and break bad ones. Built with a focus on speed, privacy, and gamification, HabitForge stores everything locally on your device—no cloud subscriptions, no internet required. 
 
-## 🚀 Getting Started
-
-### Prerequisites
-
-Make sure you have completed the [React Native Environment Setup](https://reactnative.dev/docs/set-up-your-environment) for your operating system.
-
-### Installation
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/Monaswi0104/HabitForge.git
-   cd HabitForge
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Install iOS Pods (macOS only):
-   ```bash
-   cd ios && pod install && cd ..
-   ```
-
-### Running the App
-
-Start the Metro bundler:
-```bash
-npm start
-```
-
-Run on Android:
-```bash
-npm run android
-```
-
-Run on iOS:
-```bash
-npm run ios
-```
+Whether you're sharing an iPad with your family or tracking personal goals on your phone, HabitForge's unique **Multi-Profile System** with secure PIN locks ensures that everyone's progress remains completely private and individualized.
 
 ## 📱 Screenshots
 
@@ -74,9 +34,108 @@ npm run ios
 |:---:|
 | **Settings Screen** |
 
-## 🤝 Contributing
+---
 
-Contributions, issues, and feature requests are welcome!
+## ✨ Key Features
+
+- 👥 **Multi-Profile Support**: Create unlimited profiles on a single device. Secure your profile with a 4-digit PIN!
+- 📊 **Dynamic Heatmaps**: Visually track your daily completion progress through beautiful, GitHub-style activity heatmaps.
+- 🔔 **Smart Local Notifications**: Native OS alarms ensure you never miss a habit. Get reliable drop-down banners even when the app is minimized or killed.
+- 🎮 **Gamification & XP System**: Earn experience points (XP) for completing habits. Level up your character and earn achievement badges like *Early Bird*, *Consistent*, and *Achiever*!
+- 📱 **Offline-First Storage**: 100% of your data is securely stored locally using robust SQLite. Fast, private, and independent of network connections.
+- 🎨 **Beautiful UI & Micro-Animations**: A highly polished interface with a buttery smooth dark/light mode toggle, animated transitions, and confetti celebrations powered by Reanimated.
+
+---
+
+## 🏗 System Architecture
+
+HabitForge follows a modular, decoupled architecture that separates UI logic from data persistence and background tasks.
+
+### 1. Presentation Layer (UI)
+- **React Native & React Navigation**: Handles routing (Stack and Bottom Tabs).
+- **Lucide Icons & Reanimated**: Powers the fluid micro-interactions and iconography.
+- **Theming Engine**: Dynamic context-free theming built directly into components, allowing instantaneous Light/Dark mode switching without app reloads.
+
+### 2. State Management Layer
+- **Zustand**: A fast, unopinionated state manager used to coordinate data between the SQLite database and the UI.
+- **Store Slices**: `useHabitStore`, `useProfileStore`, and `useSettingsStore` isolate domain logic and provide optimistic UI updates to ensure 60fps responsiveness.
+
+### 3. Data Persistence Layer (SQLite)
+A local, relational SQL database (`react-native-sqlite-storage`) acts as the single source of truth.
+- **`profiles` table**: Manages users, colors, and encrypted/hashed PINs.
+- **`habits` table**: Defines the core habit logic, frequency (`daily` vs `weekly`), and UI colors.
+- **`habit_days` table**: A relational junction table specifying exactly which days of the week a specific habit occurs.
+- **`completions` table**: Logs immutable timestamped events whenever a habit is marked as done.
+
+### 4. Background Services Layer
+- **Notification Service**: Wraps `react-native-push-notification`. It listens to the `useHabitStore` and asynchronously schedules native Android/iOS background alarms for future dates based on the user's selected reminder times.
+
+---
+
+## 🛠 Tech Stack
+
+### Core Technologies
+- **[React Native](https://reactnative.dev)** (v0.86.0) - Cross-platform mobile framework.
+- **[TypeScript](https://www.typescriptlang.org/)** - For type-safe code and robust refactoring.
+- **[SQLite](https://github.com/andpor/react-native-sqlite-storage)** - For relational, offline-first data persistence.
+
+### Essential Libraries
+- **Navigation**: `@react-navigation/native` & `@react-navigation/bottom-tabs`
+- **State**: `zustand`
+- **Notifications**: `react-native-push-notification`
+- **Animations**: `react-native-reanimated` & `react-native-confetti-cannon`
+- **Date Parsing**: `date-fns`
+- **Icons**: `lucide-react-native`
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+Make sure you have completed the [React Native Environment Setup](https://reactnative.dev/docs/set-up-your-environment) for your operating system (Node.js, JDK, Android Studio / Xcode).
+
+### Installation
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/Monaswi0104/HabitForge.git
+   cd HabitForge
+   ```
+
+2. **Install JavaScript dependencies**:
+   ```bash
+   npm install
+   ```
+
+3. **Install iOS Pods (macOS only)**:
+   ```bash
+   cd ios && pod install && cd ..
+   ```
+
+### Running the App
+
+Start the Metro bundler:
+```bash
+npm start
+```
+
+Launch the Android emulator:
+```bash
+npm run android
+```
+
+Launch the iOS simulator:
+```bash
+npm run ios
+```
+
+---
+
+## 👨‍💻 Developer
+
+Built with ❤️ by Monaswi.
+
+Feel free to explore the code, open issues, or submit pull requests!
 
 ## 📝 License
 
