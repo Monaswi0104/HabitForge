@@ -64,9 +64,9 @@ npm run ios
 
 ## 📱 Screenshots
 
-| <img src="./docs/screenshots/HomeScreen.png" width="200" /> | <img src="./docs/screenshots/ProfileSelectScreen.png" width="200" /> | <img src="./docs/screenshots/ProgressScreen.png" width="200" /> | <img src="./docs/screenshots/ProfileScreen.png" width="200" /> |
+| <img src="./docs/screenshots/ProfileSelectScreen.png" width="200" /> | <img src="./docs/screenshots/HomeScreen.png" width="200" /> | <img src="./docs/screenshots/ProgressScreen.png" width="200" /> | <img src="./docs/screenshots/ProfileScreen.png" width="200" /> |
 |:---:|:---:|:---:|:---:|
-| **Home Screen** | **Profile Select** | **Progress Screen** | **Profile Screen** |
+| **Profile Select** | **Home Screen** | **Progress Screen** | **Profile Screen** |
 
 <br/>
 
