@@ -64,16 +64,15 @@ npm run ios
 
 ## 📱 Screenshots
 
-<div align="center">
-  <img src="./docs/screenshots/HomeScreen.png" alt="Home Screen" width="24%" />
-  <img src="./docs/screenshots/ProfileSelectScreen.png" alt="Profile Select Screen" width="24%" />
-  <img src="./docs/screenshots/ProgressScreen.png" alt="Progress Screen" width="24%" />
-  <img src="./docs/screenshots/ProfileScreen.png" alt="Profile Screen" width="24%" />
-</div>
+| <img src="./docs/screenshots/HomeScreen.png" width="200" /> | <img src="./docs/screenshots/ProfileSelectScreen.png" width="200" /> | <img src="./docs/screenshots/ProgressScreen.png" width="200" /> | <img src="./docs/screenshots/ProfileScreen.png" width="200" /> |
+|:---:|:---:|:---:|:---:|
+| **Home Screen** | **Profile Select** | **Progress Screen** | **Profile Screen** |
 
-<div align="center">
-  <img src="./docs/screenshots/SettingsScreen.png" alt="Settings Screen" width="24%" />
-</div>
+<br/>
+
+| <img src="./docs/screenshots/SettingsScreen.png" width="200" /> |
+|:---:|
+| **Settings Screen** |
 
 ## 🤝 Contributing
 
