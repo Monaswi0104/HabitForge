@@ -1,51 +1,29 @@
-import PushNotification from 'react-native-push-notification';
-import { Platform, Alert } from 'react-native';
+import notifee, { AndroidImportance, TriggerType, TimestampTrigger, RepeatFrequency, AndroidVisibility } from '@notifee/react-native';
+import { Platform } from 'react-native';
 
 class NotificationService {
-  configure = () => {
-    PushNotification.configure({
-      onRegister: function (token) {
-        console.log('TOKEN:', token);
-      },
-      onNotification: function (notification) {
-        console.log('NOTIFICATION:', notification);
-        // Scheduled local notifications on Android do not trigger JS when they fire, 
-        // they only trigger this callback when the user TAPS them.
-      },
-      permissions: {
-        alert: true,
-        badge: true,
-        sound: true,
-      },
-      popInitialNotification: true,
-      requestPermissions: Platform.OS === 'ios',
-    });
+  private channelId: string = 'habit-reminders';
 
+  configure = async () => {
+    // Request permissions (required for iOS and Android 13+)
+    await notifee.requestPermission();
+
+    // Create Android Channel
     if (Platform.OS === 'android') {
-      PushNotification.createChannel(
-        {
-          channelId: 'habit-reminders',
-          channelName: 'Habit Reminders',
-          channelDescription: 'A channel for daily habit reminders',
-          playSound: true,
-          soundName: 'default',
-          importance: 4,
-          vibrate: true,
-        },
-        (created) => console.log(`createChannel returned '${created}'`)
-      );
-
-      if (Platform.Version >= 33) {
-        import('react-native').then(({ PermissionsAndroid }) => {
-          PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
-        });
-      }
+      this.channelId = await notifee.createChannel({
+        id: 'habit-reminders',
+        name: 'Habit Reminders',
+        description: 'A channel for daily habit reminders',
+        importance: AndroidImportance.HIGH,
+        visibility: AndroidVisibility.PUBLIC,
+        sound: 'default',
+        vibration: true,
+      });
     }
   };
 
-  scheduleHabitReminder = (habitId: string, title: string, time: Date) => {
-    // Generate a consistent numeric ID based on the string UUID
-    const numericId = parseInt(habitId.replace(/[^0-9]/g, '').slice(0, 8)) || Math.floor(Math.random() * 100000);
+  scheduleHabitReminder = async (habitId: string, title: string, time: Date) => {
+    const notificationId = `habit-${habitId}`;
     
     let scheduleDate = new Date(time);
     const now = new Date();
@@ -58,26 +36,40 @@ class NotificationService {
       scheduleDate.setDate(scheduleDate.getDate() + 1);
     }
 
-    PushNotification.localNotificationSchedule({
-      id: numericId.toString(),
-      channelId: 'habit-reminders',
-      title: 'Time for your habit!',
-      message: `Don't forget to complete: ${title}`,
-      date: scheduleDate,
-      allowWhileIdle: true,
-      repeatType: 'day',
-    });
+    // Create a time-based trigger
+    const trigger: TimestampTrigger = {
+      type: TriggerType.TIMESTAMP,
+      timestamp: scheduleDate.getTime(),
+      repeatFrequency: RepeatFrequency.DAILY, // Repeat daily
+    };
+
+    // Create the notification
+    await notifee.createTriggerNotification(
+      {
+        id: notificationId,
+        title: 'HabitForge',
+        body: `Time to: ${title}`,
+        android: {
+          channelId: this.channelId,
+          importance: AndroidImportance.HIGH,
+          pressAction: {
+            id: 'default',
+          },
+        },
+        ios: {
+          sound: 'default',
+        }
+      },
+      trigger,
+    );
   };
 
-  cancelHabitReminder = (habitId: string) => {
-    const numericId = parseInt(habitId.replace(/[^0-9]/g, '').slice(0, 8)) || 0;
-    if (numericId) {
-      PushNotification.cancelLocalNotification(numericId.toString());
-    }
+  cancelHabitReminder = async (habitId: string) => {
+    await notifee.cancelNotification(`habit-${habitId}`);
   };
 
-  cancelAll = () => {
-    PushNotification.cancelAllLocalNotifications();
+  cancelAll = async () => {
+    await notifee.cancelAllNotifications();
   };
 }
 

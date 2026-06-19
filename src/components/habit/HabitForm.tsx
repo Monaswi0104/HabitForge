@@ -48,7 +48,7 @@ export default function HabitForm({
         <TextInput
           style={[styles.input, { color: theme.text, backgroundColor: theme.background }]}
           placeholder="e.g. Read for 20 mins"
-          placeholderTextColor={theme.border}
+          placeholderTextColor={theme.textSecondary}
           value={title}
           onChangeText={setTitle}
         />
@@ -57,7 +57,7 @@ export default function HabitForm({
         <TextInput
           style={[styles.input, styles.textArea, { color: theme.text, backgroundColor: theme.background }]}
           placeholder="Why do you want to build this habit?"
-          placeholderTextColor={theme.border}
+          placeholderTextColor={theme.textSecondary}
           value={description}
           onChangeText={setDescription}
           multiline

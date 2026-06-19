@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import RootNavigator from './src/navigation/RootNavigator';
 import { initDB } from './src/database/db';
 import { notificationService } from './src/services/notificationService';
@@ -29,10 +29,18 @@ function App() {
     return <View style={styles.container} />;
   }
 
+  const MyTheme = {
+    ...(isDarkMode ? DarkTheme : DefaultTheme),
+    colors: {
+      ...(isDarkMode ? DarkTheme.colors : DefaultTheme.colors),
+      background: isDarkMode ? '#1A1A1E' : '#F9FAFB',
+    },
+  };
+
   return (
     <SafeAreaProvider>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <NavigationContainer>
+      <NavigationContainer theme={MyTheme}>
         <RootNavigator />
       </NavigationContainer>
     </SafeAreaProvider>

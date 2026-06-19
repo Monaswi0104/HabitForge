@@ -1,5 +1,5 @@
 import { useFocusEffect } from '@react-navigation/native';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, FlatList, useColorScheme, TouchableOpacity, Alert } from 'react-native';
 import { useHabitStore } from '../store/habitStore';
 import { useProfileStore } from '../store/profileStore';
@@ -9,21 +9,22 @@ import { format } from 'date-fns';
 import { calculateStreak } from '../utils/streakCalculator';
 import { executeQuery } from '../database/db';
 import { HabitDay } from '../types/habit.types';
-import { Bell, Flame, TrendingUp, CheckCircle2, Plus } from 'lucide-react-native';
+import { Bell, Flame, TrendingUp, CheckCircle2, Plus, CheckSquare } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ConfettiCannon from 'react-native-confetti-cannon';
 import { useSettingsStore } from '../store/settingsStore';
-
+import notifee, { AndroidImportance } from '@notifee/react-native';
 export default function HomeScreen({ navigation }: any) {
   const isDarkMode = useSettingsStore((state: any) => state.isDarkMode);
   const theme = isDarkMode ? Colors.dark : Colors.light;
   const insets = useSafeAreaInsets();
 
   const { activeProfileId, profiles } = useProfileStore();
-  const { habits, completions, loadHabits, toggleCompletion } = useHabitStore();
+  const { habits, completions, loadHabits, toggleCompletion, completeAll } = useHabitStore();
 
   const [habitDays, setHabitDays] = useState<HabitDay[]>([]);
   const [showConfetti, setShowConfetti] = useState(false);
+  const lastAlertTimeRef = useRef<Map<string, number>>(new Map());
   const todayStr = format(new Date(), 'yyyy-MM-dd');
   const todayName = format(new Date(), 'E'); 
 
@@ -98,6 +99,62 @@ export default function HomeScreen({ navigation }: any) {
 
     Alert.alert('Today\'s Reminders', details);
   };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const now = new Date();
+      const currentHours = now.getHours();
+      const currentMinutes = now.getMinutes();
+
+      todaysHabits.forEach(habit => {
+        if (!habit.reminder_time) return;
+        
+        // Skip if already completed today
+        const isCompleted = completions.some(c => c.habit_id === habit.id && c.date === todayStr);
+        if (isCompleted) return;
+
+        const reminderDate = new Date(habit.reminder_time);
+        const todaysReminderTime = new Date();
+        todaysReminderTime.setHours(reminderDate.getHours(), reminderDate.getMinutes(), 0, 0);
+
+        // If the current time is past the reminder time, we start the 30-second nagging
+        if (now.getTime() >= todaysReminderTime.getTime()) {
+          const lastAlert = lastAlertTimeRef.current.get(habit.id) || 0;
+          
+          // Alert if it's the very first time, or if 30 seconds have passed since the last alert
+          if (now.getTime() - lastAlert >= 30000) {
+            lastAlertTimeRef.current.set(habit.id, now.getTime());
+            
+            // Trigger the native OS notification for the chime sound and heads-up banner
+            notifee.displayNotification({
+              title: '⏰ Habit Reminder',
+              body: `It's time to do: ${habit.title}`,
+              android: {
+                channelId: 'habit-reminders',
+                importance: AndroidImportance.HIGH,
+                pressAction: {
+                  id: 'default',
+                },
+              },
+              ios: {
+                sound: 'default',
+              }
+            });
+            Alert.alert(
+              '⏰ Time for your habit!',
+              `It's time to do: ${habit.title}\n\n(I will remind you every 30 seconds until it's done!)`,
+              [
+                { text: 'Later', style: 'cancel' },
+                { text: 'Mark Done', onPress: () => handleToggle(habit.id, false) }
+              ]
+            );
+          }
+        }
+      });
+    }, 1000); // Check every second for exact precision
+
+    return () => clearInterval(interval);
+  }, [todaysHabits, completions, todayStr]);
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
@@ -216,6 +273,7 @@ export default function HomeScreen({ navigation }: any) {
               frequency={item.frequency}
               isCompleted={isCompleted}
               color={item.color}
+              iconName={item.icon}
               index={index}
               onToggle={() => handleToggle(item.id, isCompleted)}
               onPress={() => navigation.navigate('HabitDetail', { habitId: item.id })}

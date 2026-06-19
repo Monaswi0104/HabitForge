@@ -40,7 +40,13 @@ export default function SplashScreen({ navigation }: Props) {
       } else if (!currentStore.activeProfileId) {
         navigation.replace('ProfileSelect');
       } else {
-        navigation.replace('MainTabs', { screen: 'Home' });
+        navigation.reset({
+          index: 1,
+          routes: [
+            { name: 'ProfileSelect' },
+            { name: 'MainTabs', params: { screen: 'Home' } }
+          ],
+        });
       }
     };
 

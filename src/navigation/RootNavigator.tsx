@@ -11,11 +11,22 @@ import HabitDetailScreen from '../screens/HabitDetailScreen';
 import AllHabitsScreen from '../screens/AllHabitsScreen';
 import SettingScreen from '../screens/SettingScreen';
 
+import { useSettingsStore } from '../store/settingsStore';
+import { Colors } from '../constants/colors';
+
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function RootNavigator() {
+  const isDarkMode = useSettingsStore((state: any) => state.isDarkMode);
+  const theme = isDarkMode ? Colors.dark : Colors.light;
+
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator 
+      screenOptions={{ 
+        headerShown: false,
+        contentStyle: { backgroundColor: theme.background }
+      }}
+    >
       <Stack.Screen name="Splash" component={SplashScreen} />
       <Stack.Screen 
         name="ProfileSelect" 

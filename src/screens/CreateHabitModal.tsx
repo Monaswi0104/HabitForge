@@ -11,6 +11,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { format } from 'date-fns';
 import { useSettingsStore } from '../store/settingsStore';
+import { triggerHaptic } from '../utils/haptics';
+
+import { HABIT_ICONS, HABIT_COLORS } from '../constants/habitCategories';
 
 type Props = RootStackScreenProps<'CreateHabitModal'>;
 
@@ -19,15 +22,6 @@ interface Category {
   name: string;
   color: string;
 }
-
-const AVAILABLE_ICONS = [
-  { name: 'book', label: 'Study' },
-  { name: 'dumbbell', label: 'Fitness' },
-  { name: 'droplets', label: 'Water' },
-  { name: 'brain', label: 'Mind' },
-  { name: 'pencil', label: 'Journal' },
-  { name: 'heart', label: 'Health' }
-];
 
 const renderIcon = (name: string, color: string, size = 24) => {
   switch (name) {
@@ -41,7 +35,7 @@ const renderIcon = (name: string, color: string, size = 24) => {
   }
 };
 
-export default function CreateHabitModal({ navigation }: Props) {
+export default function CreateHabitModal({ route, navigation }: Props) {
   const { addHabit } = useHabitStore();
   const { activeProfileId } = useProfileStore();
   const isDarkMode = useSettingsStore((state: any) => state.isDarkMode);
@@ -53,7 +47,7 @@ export default function CreateHabitModal({ navigation }: Props) {
   const [frequency, setFrequency] = useState<Frequency>('daily');
   const [selectedIcon, setSelectedIcon] = useState('book');
   const [selectedColor, setSelectedColor] = useState(theme.avatarColors[0]);
-  
+
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
 
@@ -62,7 +56,7 @@ export default function CreateHabitModal({ navigation }: Props) {
   const [showTimePicker, setShowTimePicker] = useState(false);
 
   const toggleDay = (day: DayOfWeek) => {
-    setSelectedDays(prev => 
+    setSelectedDays(prev =>
       prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day]
     );
   };
@@ -79,6 +73,8 @@ export default function CreateHabitModal({ navigation }: Props) {
   const handleCreate = async () => {
     if (!title.trim() || !activeProfileId) return;
 
+    triggerHaptic('notificationSuccess');
+
     await addHabit({
       profile_id: activeProfileId,
       category_id: selectedCategoryId,
@@ -94,16 +90,16 @@ export default function CreateHabitModal({ navigation }: Props) {
   };
 
   return (
-    <KeyboardAvoidingView 
+    <KeyboardAvoidingView
       style={[styles.container, { backgroundColor: theme.background }]}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       {/* Header */}
       <View style={[
-        styles.header, 
-        { 
+        styles.header,
+        {
           paddingTop: Math.max(insets.top, 16),
-          backgroundColor: theme.surface 
+          backgroundColor: theme.surface
         }
       ]}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerBtn}>
@@ -116,12 +112,12 @@ export default function CreateHabitModal({ navigation }: Props) {
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        
+
         <Text style={[styles.label, { color: theme.textSecondary, marginTop: 0 }]}>Habit Name</Text>
         <TextInput
           style={[styles.input, { backgroundColor: theme.surface, color: theme.text }]}
           placeholder="e.g. Read Books"
-          placeholderTextColor={theme.border}
+          placeholderTextColor={theme.textSecondary}
           value={title}
           onChangeText={setTitle}
         />
@@ -138,7 +134,10 @@ export default function CreateHabitModal({ navigation }: Props) {
                   { backgroundColor: isSelected ? theme.primary : theme.surface },
                   isSelected && { shadowColor: theme.primary, shadowOpacity: 0.3 }
                 ]}
-                onPress={() => setSelectedCategoryId(cat.id)}
+                onPress={() => {
+                  triggerHaptic('selection');
+                  setSelectedCategoryId(cat.id);
+                }}
               >
                 <Text style={[styles.pillText, { color: isSelected ? '#FFF' : theme.textSecondary }]}>
                   {cat.name}
@@ -150,24 +149,27 @@ export default function CreateHabitModal({ navigation }: Props) {
 
         <Text style={[styles.label, { color: theme.textSecondary }]}>Icon</Text>
         <View style={styles.wrapContainer}>
-          {AVAILABLE_ICONS.map(icon => {
-            const isSelected = selectedIcon === icon.name;
+          {HABIT_ICONS.map(icon => {
+            const isSelected = selectedIcon === icon.icon;
             return (
               <TouchableOpacity
-                key={icon.name}
+                key={icon.id}
                 style={[
                   styles.iconBox,
                   { backgroundColor: isSelected ? theme.primary : theme.surface },
                   isSelected && { shadowColor: theme.primary, shadowOpacity: 0.3 }
                 ]}
-                onPress={() => setSelectedIcon(icon.name)}
+                onPress={() => {
+                  triggerHaptic('selection');
+                  setSelectedIcon(icon.icon);
+                }}
               >
-                {renderIcon(icon.name, isSelected ? '#FFF' : theme.textSecondary, 20)}
+                {renderIcon(icon.icon, isSelected ? '#FFF' : theme.textSecondary, 20)}
                 <Text style={[
                   styles.iconBoxText,
                   { color: isSelected ? '#FFF' : theme.textSecondary }
                 ]}>
-                  {icon.label}
+                  {icon.name}
                 </Text>
               </TouchableOpacity>
             );
@@ -185,7 +187,10 @@ export default function CreateHabitModal({ navigation }: Props) {
                   styles.colorCircle,
                   { backgroundColor: color }
                 ]}
-                onPress={() => setSelectedColor(color)}
+                onPress={() => {
+                  triggerHaptic('selection');
+                  setSelectedColor(color);
+                }}
                 activeOpacity={0.8}
               >
                 {isSelected && (
@@ -201,16 +206,16 @@ export default function CreateHabitModal({ navigation }: Props) {
           {(['daily', 'weekly', 'custom'] as Frequency[]).map((freq) => {
             const isSelected = frequency === freq;
             return (
-              <TouchableOpacity 
+              <TouchableOpacity
                 key={freq}
                 style={[
-                  styles.segmentBtn, 
+                  styles.segmentBtn,
                   isSelected && [styles.segmentBtnSelected, { backgroundColor: theme.surface }]
                 ]}
                 onPress={() => setFrequency(freq)}
               >
                 <Text style={[
-                  styles.segmentText, 
+                  styles.segmentText,
                   { color: isSelected ? theme.text : theme.textSecondary, fontWeight: isSelected ? '600' : '500' }
                 ]}>
                   {freq.charAt(0).toUpperCase() + freq.slice(1)}
@@ -246,7 +251,7 @@ export default function CreateHabitModal({ navigation }: Props) {
         )}
 
         <Text style={[styles.label, { color: theme.textSecondary }]}>Reminder</Text>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={[styles.inputField, { backgroundColor: theme.surface }]}
           onPress={() => setShowTimePicker(true)}
         >
@@ -273,7 +278,7 @@ export default function CreateHabitModal({ navigation }: Props) {
         <TextInput
           style={[styles.input, { backgroundColor: theme.surface, color: theme.text }]}
           placeholder="e.g. 30 minutes"
-          placeholderTextColor={theme.border}
+          placeholderTextColor={theme.textSecondary}
           value={goal}
           onChangeText={setGoal}
         />
@@ -306,11 +311,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   headerTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '700',
   },
   saveText: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '600',
     textAlign: 'right',
   },

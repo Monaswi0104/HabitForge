@@ -48,7 +48,13 @@ export default function CreateProfileScreen({ navigation }: Props) {
         selectedColor,
         pin.trim() ? pin.trim() : undefined
       );
-      navigation.replace('MainTabs', { screen: 'Home' });
+      navigation.reset({
+        index: 1,
+        routes: [
+          { name: 'ProfileSelect' },
+          { name: 'MainTabs', params: { screen: 'Home' } }
+        ],
+      });
     } catch (e) {
       console.error('Failed to create profile:', e);
     }
@@ -93,7 +99,7 @@ export default function CreateProfileScreen({ navigation }: Props) {
           <Text style={[styles.label, { color: theme.textSecondary }]}>Your Name</Text>
           <TextInput
             style={[styles.input, { backgroundColor: theme.background, color: theme.text }]}
-            placeholder="e.g. Monaswi"
+            placeholder="e.g. John"
             placeholderTextColor={theme.textSecondary}
             value={name}
             onChangeText={setName}

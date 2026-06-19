@@ -20,6 +20,9 @@ interface HabitState {
   deleteHabit: (id: string) => Promise<void>;
   toggleCompletion: (habitId: string, date: string) => Promise<void>;
   completeAll: (date: string) => Promise<void>;
+  deleteAllHabits: (profileId: string) => Promise<void>;
+  deleteHabits: (ids: string[]) => Promise<void>;
+  completeHabits: (ids: string[], date: string) => Promise<void>;
 }
 
 export const useHabitStore = create<HabitState>((set, get) => ({
@@ -129,6 +132,52 @@ export const useHabitStore = create<HabitState>((set, get) => ({
     }
   },
 
+  deleteAllHabits: async (profileId: string) => {
+    try {
+      // Get habits to delete their notifications and cascade
+      const habitsToDelete = get().habits.filter(h => h.profile_id === profileId);
+      
+      // Optimistic update
+      set({ 
+        habits: get().habits.filter(h => h.profile_id !== profileId),
+        completions: get().completions.filter(c => !habitsToDelete.some(h => h.id === c.habit_id))
+      });
+      
+      const { notificationService } = require('../services/notificationService');
+      
+      for (const habit of habitsToDelete) {
+        await executeMutation('DELETE FROM habit_days WHERE habit_id = ?', [habit.id]);
+        await executeMutation('DELETE FROM completions WHERE habit_id = ?', [habit.id]);
+        notificationService.cancelHabitReminder(habit.id);
+      }
+      
+      await executeMutation('DELETE FROM habits WHERE profile_id = ?', [profileId]);
+    } catch (e) {
+      console.error('Failed to delete all habits', e);
+    }
+  },
+
+  deleteHabits: async (ids: string[]) => {
+    if (ids.length === 0) return;
+    try {
+      set({ 
+        habits: get().habits.filter(h => !ids.includes(h.id)),
+        completions: get().completions.filter(c => !ids.includes(c.habit_id))
+      });
+      
+      const { notificationService } = require('../services/notificationService');
+      
+      for (const id of ids) {
+        await executeMutation('DELETE FROM habit_days WHERE habit_id = ?', [id]);
+        await executeMutation('DELETE FROM completions WHERE habit_id = ?', [id]);
+        await executeMutation('DELETE FROM habits WHERE id = ?', [id]);
+        notificationService.cancelHabitReminder(id);
+      }
+    } catch (e) {
+      console.error('Failed to delete habits', e);
+    }
+  },
+
   toggleCompletion: async (habitId: string, date: string) => {
     // Instant UI update for snappy feel
     const { completions } = get();
@@ -183,6 +232,35 @@ export const useHabitStore = create<HabitState>((set, get) => ({
     set({ completions: [...completions, ...newCompletions] });
 
     // Persist
+    for (const comp of newCompletions) {
+      await executeMutation(
+        'INSERT INTO completions (id, habit_id, date, completed_at) VALUES (?, ?, ?, ?)',
+        [comp.id, comp.habit_id, comp.date, comp.completed_at]
+      );
+    }
+  },
+
+  completeHabits: async (ids: string[], date: string) => {
+    if (ids.length === 0) return;
+    const { habits, completions } = get();
+    const newCompletions: Completion[] = [];
+    
+    ids.forEach(id => {
+      const isCompleted = completions.some(c => c.habit_id === id && c.date === date);
+      if (!isCompleted) {
+        newCompletions.push({
+          id: generateId(),
+          habit_id: id,
+          date,
+          completed_at: new Date().toISOString(),
+        });
+      }
+    });
+
+    if (newCompletions.length === 0) return;
+
+    set({ completions: [...completions, ...newCompletions] });
+
     for (const comp of newCompletions) {
       await executeMutation(
         'INSERT INTO completions (id, habit_id, date, completed_at) VALUES (?, ?, ?, ?)',

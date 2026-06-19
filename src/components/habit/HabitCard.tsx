@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, useColorScheme } from 'react-native';
-import { Check, BookOpen, Trash2 } from 'lucide-react-native';
+import { Check, Trash2, Book, Dumbbell, Droplets, Brain, Pencil, Heart, BookOpen } from 'lucide-react-native';
 import Animated, { 
   useSharedValue, 
   useAnimatedStyle, 
@@ -10,6 +10,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { Colors } from '../../constants/colors';
 import { useSettingsStore } from '../../store/settingsStore';
+import { triggerHaptic } from '../../utils/haptics';
 
 interface HabitCardProps {
   title: string;
@@ -20,7 +21,10 @@ interface HabitCardProps {
   onToggle: () => void;
   onPress?: () => void;
   onDelete?: () => void;
+  onLongPress?: () => void;
   index?: number;
+  isSelectionMode?: boolean;
+  isSelected?: boolean;
 }
 
 export default function HabitCard({ 
@@ -31,7 +35,11 @@ export default function HabitCard({
   onToggle,
   onPress,
   onDelete,
-  index = 0
+  onLongPress,
+  index = 0,
+  iconName,
+  isSelectionMode,
+  isSelected
 }: HabitCardProps) {
   const isDarkMode = useSettingsStore((state: any) => state.isDarkMode);
   const theme = isDarkMode ? Colors.dark : Colors.light;
@@ -53,10 +61,14 @@ export default function HabitCard({
 
   const handlePressOut = () => {
     scale.value = withSpring(1);
-    if (onPress) onPress();
+    if (onPress) {
+      triggerHaptic('selection');
+      onPress();
+    }
   };
 
   const handleToggle = () => {
+    triggerHaptic(isCompleted ? 'impactLight' : 'notificationSuccess');
     onToggle();
   };
 
@@ -92,19 +104,31 @@ export default function HabitCard({
     return theme.border;
   };
 
+  const renderIcon = (name: string | null | undefined, color: string, size = 22) => {
+    switch (name) {
+      case 'book': return <Book color={color} size={size} />;
+      case 'dumbbell': return <Dumbbell color={color} size={size} />;
+      case 'droplets': return <Droplets color={color} size={size} />;
+      case 'brain': return <Brain color={color} size={size} />;
+      case 'pencil': return <Pencil color={color} size={size} />;
+      case 'heart': return <Heart color={color} size={size} />;
+      default: return <BookOpen color={color} size={size} />;
+    }
+  };
+
   return (
-    <Animated.View 
-      entering={FadeInDown.delay(index * 100).springify().damping(14)}
-      style={[animatedCardStyle]}
-    >
+    <Animated.View style={[animatedCardStyle]}>
       <TouchableOpacity 
         activeOpacity={0.9}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
+        onLongPress={onLongPress}
         style={[
           styles.card, 
           { backgroundColor: theme.surface },
-          isCompleted && { opacity: 0.75 }
+          isCompleted && !isSelectionMode && { opacity: 0.75 },
+          isSelected && { borderColor: theme.primary, borderWidth: 2 },
+          isSelectionMode && !isSelected && { opacity: 0.4 }
         ]}
       >
         {/* Colored accent strip on the left */}
@@ -112,7 +136,7 @@ export default function HabitCard({
 
         <View style={styles.leftContent}>
           <View style={[styles.iconContainer, { backgroundColor: getLightBgColor(accentColor) }]}>
-            <BookOpen color={accentColor} size={22} />
+            {renderIcon(iconName, accentColor, 22)}
           </View>
           <View style={styles.textContent}>
             <Text 
@@ -132,26 +156,34 @@ export default function HabitCard({
         </View>
 
         <View style={styles.rightContent}>
-          {onDelete && (
-            <TouchableOpacity 
-              activeOpacity={0.7} 
-              onPress={onDelete}
-              hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
-              style={[styles.checkboxTouchArea, { marginRight: 8 }]}
-            >
-              <Trash2 color={theme.textSecondary} size={20} />
-            </TouchableOpacity>
+          {isSelectionMode ? (
+            <View style={[styles.selectionCircle, isSelected && { backgroundColor: theme.primary, borderColor: theme.primary }]}>
+              {isSelected && <Check color="#FFF" size={14} strokeWidth={3} />}
+            </View>
+          ) : (
+            <>
+              {onDelete && (
+                <TouchableOpacity 
+                  activeOpacity={0.7} 
+                  onPress={onDelete}
+                  hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+                  style={[styles.checkboxTouchArea, { marginRight: 8 }]}
+                >
+                  <Trash2 color={theme.textSecondary} size={20} />
+                </TouchableOpacity>
+              )}
+              <TouchableOpacity 
+                activeOpacity={0.7} 
+                onPress={handleToggle}
+                hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+                style={styles.checkboxTouchArea}
+              >
+                <Animated.View style={[styles.checkbox, animatedCheckboxStyle]}>
+                  {isCompleted && <Check color="#FFF" size={16} strokeWidth={3} />}
+                </Animated.View>
+              </TouchableOpacity>
+            </>
           )}
-          <TouchableOpacity 
-            activeOpacity={0.7} 
-            onPress={handleToggle}
-            hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
-            style={styles.checkboxTouchArea}
-          >
-            <Animated.View style={[styles.checkbox, animatedCheckboxStyle]}>
-              {isCompleted && <Check color="#FFF" size={16} strokeWidth={3} />}
-            </Animated.View>
-          </TouchableOpacity>
         </View>
       </TouchableOpacity>
     </Animated.View>
@@ -229,4 +261,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  selectionCircle: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: '#CCC',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 8,
+  }
 });
