@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Animated, Image } from 'react-native';
 import { RootStackScreenProps } from '../../types/navigation.types';
 import { useProfileStore } from '../../store/profileStore';
 import { Colors } from '../../constants/colors';
+import { loadMockData } from '../../database/db';
 
 type Props = RootStackScreenProps<'Splash'>;
 
@@ -36,6 +37,15 @@ export default function SplashScreen({ navigation }: Props) {
       const currentStore = useProfileStore.getState();
       
       if (currentStore.profiles.length === 0) {
+        // Automatically seed fake data from mockData.json in development
+        if (__DEV__) {
+          const loaded = await loadMockData();
+          if (loaded) {
+            await loadProfiles();
+            navigation.replace('ProfileSelect');
+            return;
+          }
+        }
         navigation.replace('CreateProfile');
       } else if (!currentStore.activeProfileId) {
         navigation.replace('ProfileSelect');

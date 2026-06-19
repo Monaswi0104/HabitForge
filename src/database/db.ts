@@ -107,7 +107,36 @@ export const executeMutation = async (
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Dev only — reset entire database
-// ─────────────────────────────────────────────────────────────────────────────
+export const loadMockData = async (): Promise<boolean> => {
+  if (!__DEV__) return false;
+  try {
+    const mockData = require('./mockData.json');
+    if (!mockData || !mockData.profiles) return false;
+
+    for (const p of mockData.profiles) {
+      await executeMutation(
+        `INSERT INTO profiles (id, name, avatar, color, pin, created_at) VALUES (?, ?, ?, ?, ?, ?);`,
+        [p.id, p.name, p.avatar || null, p.color || null, p.pin || null, p.created_at]
+      );
+    }
+    for (const h of mockData.habits) {
+      await executeMutation(
+        `INSERT INTO habits (id, profile_id, category_id, title, description, frequency, color, icon, is_archived, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
+        [h.id, h.profile_id, h.category_id, h.title, h.description, h.frequency, h.color, h.icon, h.is_archived, h.created_at]
+      );
+    }
+    for (const c of mockData.completions) {
+      await executeMutation(
+        `INSERT OR IGNORE INTO completions (id, habit_id, date, completed_at, note) VALUES (?, ?, ?, ?, ?);`,
+        [c.id, c.habit_id, c.date, c.completed_at, c.note || null]
+      );
+    }
+    return true;
+  } catch (err) {
+    console.error('Failed to load mockData.json', err);
+    return false;
+  }
+};
 export const resetDB = async (): Promise<void> => {
   if (__DEV__) {
     const database = getDB();

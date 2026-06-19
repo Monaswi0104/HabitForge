@@ -131,6 +131,17 @@ Launch the iOS simulator:
 npm run ios
 ```
 
+### Testing with Mock Data
+
+If you want to instantly see the app's charts, gamification features, and heatmaps in action without manually creating weeks of habit data, you can generate an offline mock database:
+
+1. Run the included Node script from your terminal:
+   ```bash
+   node scripts/seed.cjs
+   ```
+2. The script will generate a massive `src/database/mockData.json` file.
+3. If your app is running in Development mode (`__DEV__`) and you have **0 profiles** (e.g. on a fresh install), the app will seamlessly intercept the launch, parse the JSON file, inject the data natively into SQLite, and instantly present you with 3 fully-loaded test profiles (Alex, Jordan, and Sam) complete with 100 days of randomized completion history!
+
 ---
 
 ## 👨‍💻 Developer
