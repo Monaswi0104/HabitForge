@@ -40,10 +40,11 @@ Whether you're sharing an iPad with your family or tracking personal goals on yo
 
 - 👥 **Multi-Profile Support**: Create unlimited profiles on a single device. Secure your profile with a 4-digit PIN!
 - 📊 **Dynamic Heatmaps**: Visually track your daily completion progress through beautiful, GitHub-style activity heatmaps.
-- 🔔 **Smart Local Notifications**: Native OS alarms ensure you never miss a habit. Get reliable drop-down banners even when the app is minimized or killed.
+- 🔔 **Smart Local Notifications**: Powered by Notifee, native OS alarms ensure you never miss a habit. Get reliable high-priority banners even when the app is minimized or killed.
 - 🎮 **Gamification & XP System**: Earn experience points (XP) for completing habits. Level up your character and earn achievement badges like *Early Bird*, *Consistent*, and *Achiever*!
 - 📱 **Offline-First Storage**: 100% of your data is securely stored locally using robust SQLite. Fast, private, and independent of network connections.
 - 🎨 **Beautiful UI & Micro-Animations**: A highly polished interface with a buttery smooth dark/light mode toggle, animated transitions, and confetti celebrations powered by Reanimated.
+- 🛠 **Bulk Actions**: A smooth multi-select mode in the 'All Habits' screen allows you to complete or delete multiple habits simultaneously.
 
 ---
 
@@ -68,7 +69,7 @@ A local, relational SQL database (`react-native-sqlite-storage`) acts as the sin
 - **`completions` table**: Logs immutable timestamped events whenever a habit is marked as done.
 
 ### 4. Background Services Layer
-- **Notification Service**: Wraps `react-native-push-notification`. It listens to the `useHabitStore` and asynchronously schedules native Android/iOS background alarms for future dates based on the user's selected reminder times.
+- **Notification Service**: Integrates `@notifee/react-native`. It listens to the `useHabitStore` and asynchronously schedules native Android/iOS background timestamp triggers for future dates based on the user's selected reminder times.
 
 ---
 
@@ -82,7 +83,7 @@ A local, relational SQL database (`react-native-sqlite-storage`) acts as the sin
 ### Essential Libraries
 - **Navigation**: `@react-navigation/native` & `@react-navigation/bottom-tabs`
 - **State**: `zustand`
-- **Notifications**: `react-native-push-notification`
+- **Notifications**: `@notifee/react-native`
 - **Animations**: `react-native-reanimated` & `react-native-confetti-cannon`
 - **Date Parsing**: `date-fns`
 - **Icons**: `lucide-react-native`
