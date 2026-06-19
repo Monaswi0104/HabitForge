@@ -85,6 +85,7 @@ A local, relational SQL database (`react-native-sqlite-storage`) acts as the sin
 - **State**: `zustand`
 - **Notifications**: `@notifee/react-native`
 - **Animations**: `react-native-reanimated` & `react-native-confetti-cannon`
+- **Tactile Feedback**: `react-native-haptic-feedback`
 - **Date Parsing**: `date-fns`
 - **Icons**: `lucide-react-native`
 
