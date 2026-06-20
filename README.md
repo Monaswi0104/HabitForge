@@ -34,14 +34,14 @@ No subscriptions. No cloud syncing delays. No ads. Just you and the forge.
   <table>
     <tr>
       <td align="center"><b>Home Screen</b><br><img src="./src/assets/screenshots/home_screen.png" width="220" /></td>
-      <td align="center"><b>Progress</b><br><img src="./src/assets/screenshots/progress_screen.png" width="220" /></td>
-      <td align="center"><b>Habit Details</b><br><img src="./src/assets/screenshots/habit_details.png" width="220" /></td>
-      <td align="center"><b>Create Habit</b><br><img src="./src/assets/screenshots/create_habit_screen.png" width="220" /></td>
+      <td align="center"><b>Progress Screen</b><br><img src="./src/assets/screenshots/progress_screen.png" width="220" /></td>
+      <td align="center"><b>Habit Details Screen</b><br><img src="./src/assets/screenshots/habit_details.png" width="220" /></td>
+      <td align="center"><b>Create New Habit Screen</b><br><img src="./src/assets/screenshots/create_habit_screen.png" width="220" /></td>
     </tr>
     <tr>
-      <td align="center"><b>Profile Select</b><br><img src="./src/assets/screenshots/profile_select_screen.png" width="220" /></td>
-      <td align="center"><b>Profile Stats</b><br><img src="./src/assets/screenshots/profile_screen.png" width="220" /></td>
-      <td align="center"><b>Settings</b><br><img src="./src/assets/screenshots/settings_screen.png" width="220" /></td>
+      <td align="center"><b>Profile Select Screen</b><br><img src="./src/assets/screenshots/profile_select_screen.png" width="220" /></td>
+      <td align="center"><b>Profile Screen</b><br><img src="./src/assets/screenshots/profile_screen.png" width="220" /></td>
+      <td align="center"><b>Settings Screen</b><br><img src="./src/assets/screenshots/settings_screen.png" width="220" /></td>
       <td align="center"><b>Splash Screen</b><br><img src="./src/assets/screenshots/splash_screen.png" width="220" /></td>
     </tr>
   </table>
