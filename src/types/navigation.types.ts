@@ -16,11 +16,13 @@ export type MainTabParamList = {
 
 export type RootStackParamList = {
   Splash: undefined;
+  Onboarding: undefined;
   ProfileSelect: undefined;
   CreateProfile: undefined;
   MainTabs: NavigatorScreenParams<MainTabParamList>;
   CreateHabitModal: undefined; 
   HabitDetail: { habitId: string }; 
+  FocusTimer: { habitId: string, durationMins: number };
   AllHabits: undefined;
   Settings: undefined;
 };

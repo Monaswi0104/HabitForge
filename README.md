@@ -1,101 +1,144 @@
 <div align="center">
-  <img src="./src/assets/mockups/readme_banner_v2.png" alt="HabitForge Banner" width="60%" />
-
-  <br />
-  <br />
-
-  **Forging better habits, one day at a time.** <br />
-  A premium, offline-first, deeply analytical habit tracking application built with React Native.
+  <img src="./src/assets/images/app_icon.png" alt="HabitForge Logo" width="120" />
 
   <br />
 
-  [![React Native](https://img.shields.io/badge/React_Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactnative.dev/)
-  [![SQLite](https://img.shields.io/badge/SQLite-07405E?style=for-the-badge&logo=sqlite&logoColor=white)](https://www.sqlite.org/index.html)
-  [![Reanimated](https://img.shields.io/badge/Reanimated_3-Black?style=for-the-badge&logo=react&logoColor=white)](https://docs.swmansion.com/react-native-reanimated/)
+  # HabitForge
+
+  **Forging better habits, one day at a time.**
+
+  A premium, offline-first habit tracking app with deep analytics, beautiful animations, and smart reminders — built entirely with React Native.
+
+  <br />
+
+  [![React Native](https://img.shields.io/badge/React_Native_0.86-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactnative.dev/)
   [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+  [![SQLite](https://img.shields.io/badge/SQLite-07405E?style=for-the-badge&logo=sqlite&logoColor=white)](https://www.sqlite.org/index.html)
+  [![Reanimated](https://img.shields.io/badge/Reanimated_4-000?style=for-the-badge&logo=react&logoColor=white)](https://docs.swmansion.com/react-native-reanimated/)
 
-  <br />
 </div>
+
+---
 
 ## 🔥 Why HabitForge?
 
-Most habit trackers are either too simple, losing your interest after a week, or too complex, feeling like a chore to update. **HabitForge** strikes the perfect balance. It combines a gorgeous, fluid, glassmorphic UI with incredibly deep, local-first SQLite analytics that actually teach you about your behavior.
+Most habit trackers are either too simple — losing your interest after a week — or too complex, feeling like a chore to update. **HabitForge** strikes the perfect balance: a gorgeous, fluid UI paired with powerful local-first SQLite analytics that actually teach you about your behavior.
 
-No subscriptions. No cloud syncing delays. Just you and the forge.
+No subscriptions. No cloud syncing delays. No ads. Just you and the forge.
 
 ---
 
 ## ✨ Features
 
-<table>
-  <tr>
-    <td width="50%">
-      <img src="./src/assets/mockups/mockup_home.png" alt="Home Screen Mockup" width="100%" />
-    </td>
-    <td width="50%" valign="center">
-      <h3>Fluid, Premium UI</h3>
-      <p>Every interaction is carefully crafted using React Native Reanimated. From the spring-physics <strong>completion rings</strong> to the deeply satisfying gradient buttons and subtle glassmorphic shadows, the app is designed to wow.</p>
-      <ul>
-        <li>Animated Completion Rings</li>
-        <li>Smooth MotiView Entrances</li>
-        <li>Subtle Glass Shadows</li>
-        <li>Haptic Feedback on Interactions</li>
-      </ul>
-    </td>
-  </tr>
-  <tr>
-    <td width="50%" valign="center">
-      <h3>Deep, Actionable Analytics</h3>
-      <p>The Statistics Dashboard crunches your SQLite data locally to give you real insights without sending your data to the cloud.</p>
-      <ul>
-        <li><strong>Average Completion Time</strong>: See exactly when you usually complete habits (e.g., 9:30 AM).</li>
-        <li><strong>GitHub-style Heatmaps</strong>: Visualize your consistency over the last 90 days.</li>
-        <li><strong>Category Distribution</strong>: Stacked bar charts of your habit domains.</li>
-        <li>Current & Longest Streaks</li>
-      </ul>
-    </td>
-    <td width="50%">
-      <img src="./src/assets/mockups/mockup_stats.png" alt="Statistics Screen Mockup" width="100%" />
-    </td>
-  </tr>
-</table>
+### 🏠 Home Dashboard
+- **Animated Progress Ring** — A beautiful SVG ring with spring-physics animation showing your daily completion percentage
+- **Streak Tracker** — Gradient cards displaying your current day streak with motivational messages
+- **Quick Stats** — Individual elevated stat cards with gradient accent bars for Active habits, Today's completions, and Streak count
+- **Smart Reminders** — Tap the notification bell to see all scheduled reminders in a beautiful custom modal
+- **Confetti Celebration** — Complete all your habits for the day and get rewarded with a confetti cannon! 🎉
 
-## 🛠️ Tech Stack & Architecture
+### 📝 Habit Management
+- **Create Custom Habits** — Set title, category, frequency (daily/weekly), custom colors, icons or emojis, daily targets with units, and reminder times
+- **Multi-step Habits** — Track habits with multiple steps (e.g., "Drink 8 glasses of water") with visual progress bars
+- **Flexible Scheduling** — Choose specific days of the week for weekly habits
+- **Batch Operations** — Long-press to select multiple habits for bulk deletion
+- **Gradient Habit Cards** — Each card has a subtle color-tinted background matching its accent color
 
-HabitForge is built for performance and maintainability.
+### 📊 Progress & Analytics
+- **GitHub-style Heatmap** — Visualize your consistency over the last 90 days with an interactive activity grid
+- **Completion Trends** — Weekly bar charts showing your habit completion rates over time
+- **Category Distribution** — See how your habits break down across categories (Health, Finance, Learning, etc.)
+- **Streak Analytics** — Track current streaks, longest streaks, and best performing days of the week
+- **Overall Completion Rate** — Percentage-based analytics across all your habits
 
-- **Frontend**: React Native (Bare Workflow)
-- **Language**: TypeScript (Strict Mode)
-- **State Management**: Zustand (blazing fast, boilerplate-free)
-- **Local Database**: `react-native-sqlite-storage` (Full 3NF Normalized Schema)
-- **Animations**: `react-native-reanimated` v3 & `moti`
-- **Icons**: `lucide-react-native`
-- **Styling**: Context-aware dynamic theming (Dark/Light mode support)
+### 👤 Profile System
+- **Multi-Profile Support** — Create multiple profiles for family members or different contexts
+- **Avatar Selection** — Choose from a curated set of color avatars
+- **Profile Stats** — View per-profile statistics and habit counts
 
-### Database Schema (3NF)
-We use a strictly normalized SQLite database:
-1. `profiles`: Support for multi-user/family usage.
-2. `categories`: Seeded domains (Health, Finance, etc.).
-3. `habits`: Core habit definitions.
-4. `habit_days`: Resolves 1NF violations for weekly habit schedules.
-5. `completions`: The raw log driving the powerful analytics engine.
+### ⏱ Focus Timer
+- **Pomodoro-style Timer** — A dedicated focus timer screen for deep work sessions
+- **Animated Circular Progress** — Beautiful countdown ring with real-time updates
+- **Session Tracking** — Keep track of your focused work sessions
+
+### ⚙️ Settings & Customization
+- **Dark / Light Mode** — Full theme support with carefully designed color palettes for both modes
+- **Notification Controls** — Toggle notifications on/off globally
+- **Reminder Sound Selection** — Choose from Chime, Bell, Ping, or Buzz sounds
+- **Custom Reminder Modals** — Premium-styled modal popups that match the app's UI instead of plain system alerts
+- **About Section** — App info and credits
+
+### 🔔 Smart Notifications
+- **Scheduled Reminders** — Set per-habit reminder times with native OS notifications via Notifee
+- **Recurring Alerts** — Habits you haven't completed will gently nag you every 30 seconds with a premium in-app modal
+- **Mark Done from Notification** — Complete habits directly from the reminder popup without navigating
+
+### 🎨 Design & Polish
+- **Linear Gradients** — Gradient cards, accent bars, and tinted backgrounds throughout the app
+- **Spring Animations** — React Native Reanimated 4 powers buttery smooth transitions and micro-interactions
+- **Haptic Feedback** — Subtle vibrations on completions, toggles, and navigation for tactile satisfaction
+- **Staggered Entrances** — Habit cards animate in one-by-one with FadeInDown spring animations
+- **Decorative Elements** — Frosted glass circles and layered shadows for depth
 
 ---
 
-## 🎨 Branding & Assets
+## 🛠️ Tech Stack
 
-Check out our [LOGO_GUIDELINES.md](./LOGO_GUIDELINES.md) to learn about the visual identity, typography, and color palette (Indigo, Emerald, and Forging Orange) that give HabitForge its premium startup feel. 
+| Layer | Technology |
+|-------|-----------|
+| **Framework** | React Native 0.86 (Bare Workflow) |
+| **Language** | TypeScript (Strict Mode) |
+| **State Management** | Zustand |
+| **Local Database** | `react-native-sqlite-storage` |
+| **Animations** | `react-native-reanimated` v4 |
+| **Gradients** | `react-native-linear-gradient` |
+| **Navigation** | React Navigation 7 (Native Stack + Bottom Tabs) |
+| **Notifications** | `@notifee/react-native` |
+| **Icons** | `lucide-react-native` |
+| **Charts / SVG** | `react-native-svg` |
+| **Haptics** | `react-native-haptic-feedback` |
+| **Date Utilities** | `date-fns` |
 
-Visual assets (App Icons, Splash Screens, Banners) can be found in `src/assets/`.
+---
+
+## 🗄️ Database Schema (3NF)
+
+HabitForge uses a strictly normalized SQLite database with 5 tables:
+
+```
+┌──────────────┐     ┌──────────────┐     ┌──────────────┐
+│   profiles   │────▶│    habits     │────▶│ completions  │
+│──────────────│     │──────────────│     │──────────────│
+│ id (PK)      │     │ id (PK)      │     │ id (PK)      │
+│ name         │     │ profile_id   │     │ habit_id     │
+│ avatar_color │     │ title        │     │ date         │
+│ created_at   │     │ category_id  │     │ progress     │
+└──────────────┘     │ frequency    │     │ completed_at │
+                     │ color        │     └──────────────┘
+┌──────────────┐     │ icon         │
+│  categories  │────▶│ target_count │     ┌──────────────┐
+│──────────────│     │ target_unit  │     │  habit_days  │
+│ id (PK)      │     │ reminder_time│◀────│──────────────│
+│ name         │     └──────────────┘     │ habit_id     │
+│ icon         │                          │ day          │
+└──────────────┘                          └──────────────┘
+```
+
+- **profiles** — Multi-user/family support
+- **categories** — Seeded domains (Health, Fitness, Finance, Learning, etc.)
+- **habits** — Core habit definitions with colors, icons, targets, and reminders
+- **habit_days** — Resolves 1NF violations for weekly habit schedules
+- **completions** — The raw log driving the analytics engine
 
 ---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js (v18+)
+- Node.js (v22+)
 - Ruby (for iOS CocoaPods)
 - Android Studio & Xcode
+- JDK 17+
 
 ### Installation
 
@@ -117,15 +160,54 @@ Visual assets (App Icons, Splash Screens, Banners) can be found in `src/assets/`
 
 4. **Run the app**
    ```bash
-   # For iOS
-   npm run ios
-   
+   # Start Metro bundler
+   npm start
+
    # For Android
    npm run android
+
+   # For iOS
+   npm run ios
    ```
 
 ---
 
+## 📁 Project Structure
+
+```
+src/
+├── assets/            # Images, icons, and app branding
+├── components/        # Reusable UI components
+│   ├── habit/         #   HabitCard, HabitList
+│   └── profile/       #   ProgressRing, Avatar
+├── constants/         # Colors, theme definitions
+├── database/          # SQLite schema & initialization
+├── navigation/        # React Navigation setup
+├── screens/           # All app screens
+│   ├── auth/          #   OnboardingScreen
+│   ├── HomeScreen     #   Dashboard with cards & habits
+│   ├── CreateHabitModal   #   Full habit creation flow
+│   ├── HabitDetailScreen  #   Individual habit analytics
+│   ├── ProgressScreen     #   Heatmaps, charts, streaks
+│   ├── ProfileScreen      #   Multi-profile management
+│   ├── FocusTimerScreen   #   Pomodoro-style timer
+│   ├── SettingScreen      #   App preferences
+│   └── AllHabitsScreen    #   Full habit list with batch ops
+├── services/          # Notification scheduling
+├── store/             # Zustand state management
+├── types/             # TypeScript type definitions
+└── utils/             # Helpers (dates, streaks, haptics)
+```
+
+---
+
+## 📄 License
+
+This project is for educational and portfolio purposes.
+
+---
+
 <div align="center">
-  <p>Built with ❤️ and ☕️. Strike the iron while it's hot.</p>
+  <p>Built with ❤️ by <strong>Monaswi</strong></p>
+  <p><em>Strike the iron while it's hot.</em> 🔨🔥</p>
 </div>

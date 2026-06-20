@@ -11,6 +11,8 @@ export interface Habit {
   color?: string | null;
   icon?: string | null;
   reminder_time?: string | null;
+  target_count: number;
+  target_unit?: string | null;
   is_archived: number;
   created_at: string;
 }
@@ -26,5 +28,6 @@ export interface Completion {
   habit_id: string;
   date: string; // YYYY-MM-DD
   completed_at: string; // ISO 8601
+  progress_value: number;
   note?: string | null;
 }

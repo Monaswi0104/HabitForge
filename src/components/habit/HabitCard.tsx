@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, useColorScheme } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Check, Trash2, Book, Dumbbell, Droplets, Heart, BookOpen, Code, Wallet, Sparkles, GraduationCap, Activity } from 'lucide-react-native';
 import Animated, { 
   useSharedValue, 
@@ -9,6 +9,7 @@ import Animated, {
   interpolate,
   FadeInDown
 } from 'react-native-reanimated';
+import LinearGradient from 'react-native-linear-gradient';
 import { Colors } from '../../constants/colors';
 import { useSettingsStore } from '../../store/settingsStore';
 import { triggerHaptic } from '../../utils/haptics';
@@ -23,6 +24,9 @@ interface HabitCardProps {
   onPress?: () => void;
   onDelete?: () => void;
   onLongPress?: () => void;
+  targetCount?: number;
+  targetUnit?: string | null;
+  progressValue?: number;
   index?: number;
   isSelectionMode?: boolean;
   isSelected?: boolean;
@@ -37,6 +41,9 @@ export default function HabitCard({
   onPress,
   onDelete,
   onLongPress,
+  targetCount = 1,
+  targetUnit,
+  progressValue = 0,
   index = 0,
   iconName,
   isSelectionMode,
@@ -106,28 +113,32 @@ export default function HabitCard({
     };
   });
 
-  const getLightBgColor = (hex: string) => {
-    if (hex.length === 7) return hex + '18';
-    return theme.border;
+  const getGradientColors = (hex: string): [string, string] => {
+    if (isDarkMode) {
+      return [hex + '12', hex + '04'];
+    }
+    return [hex + '0D', hex + '03'];
   };
 
-  const renderIcon = (name: string | null | undefined, color: string, size = 22) => {
+  const renderIcon = (name: string | null | undefined, iconColor: string, size = 22) => {
     if (name && (name.match(/[\p{Emoji}]/u) || name.length <= 2) && name !== 'book' && name !== 'code') {
-      return <Text style={{ fontSize: size - 4 }}>{name}</Text>;
+      return <Text style={{ fontSize: size - 2 }}>{name}</Text>;
     }
     switch (name) {
-      case 'book': return <Book color={color} size={size} />;
-      case 'dumbbell': return <Dumbbell color={color} size={size} />;
-      case 'droplets': return <Droplets color={color} size={size} />;
-      case 'heart': return <Heart color={color} size={size} />;
-      case 'code': return <Code color={color} size={size} />;
-      case 'wallet': return <Wallet color={color} size={size} />;
-      case 'sparkles': return <Sparkles color={color} size={size} />;
-      case 'graduation-cap': return <GraduationCap color={color} size={size} />;
-      case 'activity': return <Activity color={color} size={size} />;
-      default: return <BookOpen color={color} size={size} />;
+      case 'book': return <Book color={iconColor} size={size} />;
+      case 'dumbbell': return <Dumbbell color={iconColor} size={size} />;
+      case 'droplets': return <Droplets color={iconColor} size={size} />;
+      case 'heart': return <Heart color={iconColor} size={size} />;
+      case 'code': return <Code color={iconColor} size={size} />;
+      case 'wallet': return <Wallet color={iconColor} size={size} />;
+      case 'sparkles': return <Sparkles color={iconColor} size={size} />;
+      case 'graduation-cap': return <GraduationCap color={iconColor} size={size} />;
+      case 'activity': return <Activity color={iconColor} size={size} />;
+      default: return <BookOpen color={iconColor} size={size} />;
     }
   };
+
+  const progressFraction = targetCount > 1 ? Math.min(progressValue / targetCount, 1) : 0;
 
   return (
     <Animated.View 
@@ -136,22 +147,35 @@ export default function HabitCard({
     >
       <TouchableOpacity 
         activeOpacity={0.9}
-          onPressIn={handlePressIn}
-          onPressOut={handlePressOut}
-          onLongPress={onLongPress}
-          style={[
-            styles.card, 
-            { backgroundColor: theme.surface + 'E6' },
-            isCompleted && !isSelectionMode && { opacity: 0.75 },
-            isSelected && { borderColor: theme.primary, borderWidth: 2 },
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        onLongPress={onLongPress}
+        style={[
+          styles.card, 
+          { backgroundColor: theme.surface },
+          isCompleted && !isSelectionMode && { opacity: 0.8 },
+          isSelected && { borderColor: theme.primary, borderWidth: 2 },
           isSelectionMode && !isSelected && { opacity: 0.4 }
         ]}
       >
+        {/* Subtle gradient background tint */}
+        <LinearGradient
+          colors={getGradientColors(accentColor) as any}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={StyleSheet.absoluteFill}
+        />
+
         {/* Colored accent strip on the left */}
-        <View style={[styles.accentStrip, { backgroundColor: accentColor }]} />
+        <LinearGradient
+          colors={[accentColor, accentColor + 'AA']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0, y: 1 }}
+          style={styles.accentStrip}
+        />
 
         <View style={styles.leftContent}>
-          <View style={[styles.iconContainer, { backgroundColor: getLightBgColor(accentColor) }]}>
+          <View style={[styles.iconContainer, { backgroundColor: accentColor + '1A' }]}>
             {renderIcon(iconName, accentColor, 22)}
           </View>
           <View style={styles.textContent}>
@@ -165,9 +189,25 @@ export default function HabitCard({
             >
               {title}
             </Text>
-            <Text style={[styles.frequency, { color: theme.textSecondary }]}>
-              {frequency.charAt(0).toUpperCase() + frequency.slice(1)}
-            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Text style={[styles.frequency, { color: theme.textSecondary }]}>
+                {frequency.charAt(0).toUpperCase() + frequency.slice(1)}
+              </Text>
+              {targetCount > 1 && (
+                <>
+                  <Text style={{ color: theme.textSecondary, marginHorizontal: 4, fontSize: 10 }}>•</Text>
+                  <Text style={[styles.frequency, { color: accentColor, fontWeight: '700' }]}>
+                    {progressValue}/{targetCount} {targetUnit || ''}
+                  </Text>
+                </>
+              )}
+            </View>
+            {/* Progress bar for multi-step habits */}
+            {targetCount > 1 && (
+              <View style={[styles.progressBarBg, { backgroundColor: accentColor + '15' }]}>
+                <View style={[styles.progressBarFill, { width: `${progressFraction * 100}%` as any, backgroundColor: accentColor }]} />
+              </View>
+            )}
           </View>
         </View>
 
@@ -201,7 +241,7 @@ export default function HabitCard({
             </>
           )}
         </View>
-        </TouchableOpacity>
+      </TouchableOpacity>
     </Animated.View>
   );
 }
@@ -215,12 +255,12 @@ const styles = StyleSheet.create({
     paddingRight: 16,
     paddingLeft: 0,
     marginBottom: 12,
-    borderRadius: 16,
+    borderRadius: 20,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 4,
     overflow: 'hidden',
   },
   accentStrip: {
@@ -230,19 +270,19 @@ const styles = StyleSheet.create({
     left: 0,
     top: 0,
     bottom: 0,
-    borderTopLeftRadius: 16,
-    borderBottomLeftRadius: 16,
+    borderTopLeftRadius: 20,
+    borderBottomLeftRadius: 20,
   },
   leftContent: {
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
-    paddingLeft: 16,
+    paddingLeft: 18,
   },
   iconContainer: {
-    width: 50,
-    height: 50,
-    borderRadius: 14,
+    width: 52,
+    height: 52,
+    borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 14,
@@ -252,13 +292,23 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '700',
     marginBottom: 4,
-    letterSpacing: 0.1,
+    letterSpacing: -0.2,
   },
   frequency: {
     fontSize: 13,
     fontWeight: '500',
+  },
+  progressBarBg: {
+    height: 5,
+    borderRadius: 3,
+    marginTop: 8,
+    overflow: 'hidden',
+  },
+  progressBarFill: {
+    height: '100%',
+    borderRadius: 3,
   },
   rightContent: {
     flexDirection: 'row',
@@ -270,9 +320,9 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   checkbox: {
-    width: 28,
-    height: 28,
-    borderRadius: 8,
+    width: 30,
+    height: 30,
+    borderRadius: 10,
     borderWidth: 2,
     justifyContent: 'center',
     alignItems: 'center',

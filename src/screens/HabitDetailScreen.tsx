@@ -11,6 +11,7 @@ import { useSettingsStore } from '../store/settingsStore';
 import { calculateStreak } from '../utils/streakCalculator';
 import HeatmapCalendar from '../components/habit/HeatmapCalender';
 import { format } from 'date-fns';
+import { TextInput } from 'react-native';
 
 type Props = RootStackScreenProps<'HabitDetail'>;
 
@@ -38,9 +39,12 @@ export default function HabitDetailScreen({ route, navigation }: Props) {
   const insets = useSafeAreaInsets();
   
   const { habitId } = route.params;
-  const { habits, completions, deleteHabit } = useHabitStore();
+  const { habits, completions, deleteHabit, updateCompletionNote } = useHabitStore();
   const habit = habits.find(h => h.id === habitId);
   const primaryColor = habit?.color || theme.primary;
+
+  const [editingNoteId, setEditingNoteId] = React.useState<string | null>(null);
+  const [tempNote, setTempNote] = React.useState('');
 
   const habitCompletions = completions.filter(c => c.habit_id === habitId);
   const streakStats = habit ? calculateStreak(habitCompletions, habit.frequency) : { currentStreak: 0, longestStreak: 0, missedDays: 0 };
@@ -183,6 +187,15 @@ export default function HabitDetailScreen({ route, navigation }: Props) {
           </View>
         </ViewShot>
 
+        <TouchableOpacity 
+          style={[styles.focusBtn, { backgroundColor: primaryColor }]}
+          onPress={() => navigation.navigate('FocusTimer', { habitId: habit.id, durationMins: 25 })}
+          activeOpacity={0.8}
+        >
+          <Clock color="#FFF" size={20} />
+          <Text style={styles.focusBtnText}>Start Focus Session (25m)</Text>
+        </TouchableOpacity>
+
         {/* Heatmap Card */}
         <View style={[styles.heatmapCard, { backgroundColor: theme.surface }]}>
           <View style={styles.heatmapHeader}>
@@ -232,7 +245,36 @@ export default function HabitDetailScreen({ route, navigation }: Props) {
             >
               <View style={styles.activityLeft}>
                 <View style={[styles.activityDot, { backgroundColor: '#10B981' }]} />
-                <Text style={[styles.activityDate, { color: theme.text }]}>{format(new Date(activity.date), 'MMM d, yyyy')}</Text>
+                <View>
+                  <Text style={[styles.activityDate, { color: theme.text }]}>{format(new Date(activity.date), 'MMM d, yyyy')}</Text>
+                  
+                  {editingNoteId === activity.id ? (
+                    <TextInput
+                      style={{ color: theme.text, fontSize: 14, marginTop: 4, padding: 0, borderBottomWidth: 1, borderBottomColor: primaryColor }}
+                      value={tempNote}
+                      onChangeText={setTempNote}
+                      placeholder="Add a note..."
+                      placeholderTextColor={theme.textSecondary}
+                      autoFocus
+                      onSubmitEditing={() => {
+                        updateCompletionNote(activity.id, tempNote.trim());
+                        setEditingNoteId(null);
+                      }}
+                      onBlur={() => setEditingNoteId(null)}
+                    />
+                  ) : (
+                    <TouchableOpacity 
+                      onPress={() => {
+                        setEditingNoteId(activity.id);
+                        setTempNote(activity.note || '');
+                      }}
+                    >
+                      <Text style={{ color: activity.note ? theme.textSecondary : theme.textSecondary + '80', fontSize: 13, marginTop: 4, fontStyle: activity.note ? 'normal' : 'italic' }}>
+                        {activity.note || 'Tap to add note...'}
+                      </Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
               </View>
               <View style={styles.activityStatus}>
                 <Text style={[styles.activityStatusText, { color: '#10B981' }]}>Completed</Text>
@@ -373,6 +415,26 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '500',
     textAlign: 'center',
+  },
+  // Focus Button
+  focusBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
+    borderRadius: 20,
+    marginBottom: 16,
+    gap: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 4,
+  },
+  focusBtnText: {
+    color: '#FFF',
+    fontSize: 16,
+    fontWeight: '700',
   },
   // Heatmap
   heatmapCard: {

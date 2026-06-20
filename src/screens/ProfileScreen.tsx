@@ -28,12 +28,10 @@ export default function ProfileScreen({ navigation }: any) {
     completions.some(c => c.habit_id === h.id)
   ).length;
 
-  // Calculate XP and Level
-  const XP_PER_COMPLETION = 50;
-  const XP_PER_LEVEL = 500;
-  
-  const totalXP = totalCompletions * XP_PER_COMPLETION;
-  const currentLevel = Math.floor(totalXP / XP_PER_LEVEL) + 1;
+  // Calculate XP and Level using real database values
+  const XP_PER_LEVEL = 100;
+  const totalXP = activeProfile?.xp || 0;
+  const currentLevel = activeProfile?.level || 1;
   const xpInCurrentLevel = totalXP % XP_PER_LEVEL;
   const xpProgress = xpInCurrentLevel / XP_PER_LEVEL;
 

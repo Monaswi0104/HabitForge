@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation.types';
 
 import SplashScreen from '../screens/auth/SplashScreen';
+import OnboardingScreen from '../screens/auth/OnboardingScreen';
 import ProfileSelectScreen from '../screens/auth/ProfileSelectScreen';
 import CreateProfileScreen from '../screens/auth/CreateProfileScreen';
 import TabNavigator from './TabNavigator';
@@ -10,6 +11,7 @@ import CreateHabitModal from '../screens/CreateHabitModal';
 import HabitDetailScreen from '../screens/HabitDetailScreen';
 import AllHabitsScreen from '../screens/AllHabitsScreen';
 import SettingScreen from '../screens/SettingScreen';
+import FocusTimerScreen from '../screens/FocusTimerScreen';
 
 import { useSettingsStore } from '../store/settingsStore';
 import { Colors } from '../constants/colors';
@@ -28,6 +30,11 @@ export default function RootNavigator() {
       }}
     >
       <Stack.Screen name="Splash" component={SplashScreen} />
+      <Stack.Screen 
+        name="Onboarding" 
+        component={OnboardingScreen} 
+        options={{ animation: 'fade' }} 
+      />
       <Stack.Screen 
         name="ProfileSelect" 
         component={ProfileSelectScreen} 
@@ -62,6 +69,11 @@ export default function RootNavigator() {
         name="Settings" 
         component={SettingScreen} 
         options={{ animation: 'slide_from_bottom' }} 
+      />
+      <Stack.Screen 
+        name="FocusTimer" 
+        component={FocusTimerScreen} 
+        options={{ presentation: 'fullScreenModal' }} 
       />
     </Stack.Navigator>
   );

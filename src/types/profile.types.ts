@@ -6,5 +6,7 @@ export interface Profile {
   avatar?: string | null;
   color?: string | null;
   pin?: string | null;
+  xp: number;
+  level: number;
   created_at: string;
 }

@@ -20,6 +20,8 @@ interface HabitState {
   addHabit: (habit: Omit<Habit, 'id' | 'is_archived' | 'created_at'>, selectedDays?: DayOfWeek[]) => Promise<void>;
   deleteHabit: (id: string) => Promise<void>;
   toggleCompletion: (habitId: string, date: string) => Promise<void>;
+  incrementProgress: (habitId: string, date: string, targetCount: number) => Promise<void>;
+  updateCompletionNote: (completionId: string, note: string) => Promise<void>;
   completeAll: (date: string) => Promise<void>;
   deleteAllHabits: (profileId: string) => Promise<void>;
   deleteHabits: (ids: string[]) => Promise<void>;
@@ -202,6 +204,12 @@ export const useHabitStore = create<HabitState>((set, get) => ({
       });
       // Persist
       await executeMutation('DELETE FROM completions WHERE id = ?', [existingCompletion.id]);
+      
+      // Remove XP
+      const { useProfileStore } = require('./profileStore');
+      const activeProfileId = useProfileStore.getState().activeProfileId;
+      if (activeProfileId) useProfileStore.getState().addXP(activeProfileId, -15);
+      
     } else {
       // Complete
       const newCompletion: Completion = {
@@ -209,16 +217,83 @@ export const useHabitStore = create<HabitState>((set, get) => ({
         habit_id: habitId,
         date,
         completed_at: new Date().toISOString(),
+        progress_value: 1,
       };
       set({
         completions: [...completions, newCompletion]
       });
       // Persist
       await executeMutation(
-        'INSERT INTO completions (id, habit_id, date, completed_at) VALUES (?, ?, ?, ?)',
-        [newCompletion.id, newCompletion.habit_id, newCompletion.date, newCompletion.completed_at]
+        'INSERT INTO completions (id, habit_id, date, completed_at, progress_value) VALUES (?, ?, ?, ?, ?)',
+        [newCompletion.id, newCompletion.habit_id, newCompletion.date, newCompletion.completed_at, newCompletion.progress_value]
       );
+      
+      // Add XP
+      const { useProfileStore } = require('./profileStore');
+      const activeProfileId = useProfileStore.getState().activeProfileId;
+      if (activeProfileId) useProfileStore.getState().addXP(activeProfileId, 15);
     }
+  },
+
+  incrementProgress: async (habitId: string, date: string, targetCount: number) => {
+    const { completions } = get();
+    const existingCompletion = completions.find(c => c.habit_id === habitId && c.date === date);
+
+    if (existingCompletion) {
+      if (existingCompletion.progress_value >= targetCount) {
+        // Reset to 0 (delete)
+        set({ completions: completions.filter(c => c.id !== existingCompletion.id) });
+        await executeMutation('DELETE FROM completions WHERE id = ?', [existingCompletion.id]);
+        
+        // Remove XP
+        const { useProfileStore } = require('./profileStore');
+        const activeProfileId = useProfileStore.getState().activeProfileId;
+        if (activeProfileId) useProfileStore.getState().addXP(activeProfileId, -15);
+      } else {
+        // Increment
+        const newProgress = existingCompletion.progress_value + 1;
+        set({
+          completions: completions.map(c => c.id === existingCompletion.id ? { ...c, progress_value: newProgress } : c)
+        });
+        await executeMutation('UPDATE completions SET progress_value = ? WHERE id = ?', [newProgress, existingCompletion.id]);
+        
+        // Add XP if we just reached the target
+        if (newProgress === targetCount) {
+          const { useProfileStore } = require('./profileStore');
+          const activeProfileId = useProfileStore.getState().activeProfileId;
+          if (activeProfileId) useProfileStore.getState().addXP(activeProfileId, 15);
+        }
+      }
+    } else {
+      // First increment
+      const newCompletion: Completion = {
+        id: generateId(),
+        habit_id: habitId,
+        date,
+        completed_at: new Date().toISOString(),
+        progress_value: 1,
+      };
+      set({ completions: [...completions, newCompletion] });
+      await executeMutation(
+        'INSERT INTO completions (id, habit_id, date, completed_at, progress_value) VALUES (?, ?, ?, ?, ?)',
+        [newCompletion.id, newCompletion.habit_id, newCompletion.date, newCompletion.completed_at, newCompletion.progress_value]
+      );
+      
+      // If target is 1, give XP immediately
+      if (targetCount === 1) {
+        const { useProfileStore } = require('./profileStore');
+        const activeProfileId = useProfileStore.getState().activeProfileId;
+        if (activeProfileId) useProfileStore.getState().addXP(activeProfileId, 15);
+      }
+    }
+  },
+
+  updateCompletionNote: async (completionId: string, note: string) => {
+    const { completions } = get();
+    set({
+      completions: completions.map(c => c.id === completionId ? { ...c, note } : c)
+    });
+    await executeMutation('UPDATE completions SET note = ? WHERE id = ?', [note, completionId]);
   },
 
   completeAll: async (date: string) => {
@@ -234,6 +309,7 @@ export const useHabitStore = create<HabitState>((set, get) => ({
           habit_id: habit.id,
           date,
           completed_at: new Date().toISOString(),
+          progress_value: 1,
         });
       }
     });
@@ -246,25 +322,32 @@ export const useHabitStore = create<HabitState>((set, get) => ({
     // Persist
     for (const comp of newCompletions) {
       await executeMutation(
-        'INSERT INTO completions (id, habit_id, date, completed_at) VALUES (?, ?, ?, ?)',
-        [comp.id, comp.habit_id, comp.date, comp.completed_at]
+        'INSERT INTO completions (id, habit_id, date, completed_at, progress_value) VALUES (?, ?, ?, ?, ?)',
+        [comp.id, comp.habit_id, comp.date, comp.completed_at, comp.progress_value]
       );
     }
+
+    // Add XP
+    const { useProfileStore } = require('./profileStore');
+    const activeProfileId = useProfileStore.getState().activeProfileId;
+    if (activeProfileId) useProfileStore.getState().addXP(activeProfileId, 15 * newCompletions.length);
   },
 
   completeHabits: async (ids: string[], date: string) => {
     if (ids.length === 0) return;
-    const { habits, completions } = get();
+    
+    const { completions } = get();
     const newCompletions: Completion[] = [];
     
-    ids.forEach(id => {
-      const isCompleted = completions.some(c => c.habit_id === id && c.date === date);
+    ids.forEach(habitId => {
+      const isCompleted = completions.some(c => c.habit_id === habitId && c.date === date);
       if (!isCompleted) {
         newCompletions.push({
           id: generateId(),
-          habit_id: id,
+          habit_id: habitId,
           date,
           completed_at: new Date().toISOString(),
+          progress_value: 1,
         });
       }
     });
@@ -275,9 +358,14 @@ export const useHabitStore = create<HabitState>((set, get) => ({
 
     for (const comp of newCompletions) {
       await executeMutation(
-        'INSERT INTO completions (id, habit_id, date, completed_at) VALUES (?, ?, ?, ?)',
-        [comp.id, comp.habit_id, comp.date, comp.completed_at]
+        'INSERT INTO completions (id, habit_id, date, completed_at, progress_value) VALUES (?, ?, ?, ?, ?)',
+        [comp.id, comp.habit_id, comp.date, comp.completed_at, comp.progress_value]
       );
     }
+    
+    // Add XP
+    const { useProfileStore } = require('./profileStore');
+    const activeProfileId = useProfileStore.getState().activeProfileId;
+    if (activeProfileId) useProfileStore.getState().addXP(activeProfileId, 15 * newCompletions.length);
   }
 }));

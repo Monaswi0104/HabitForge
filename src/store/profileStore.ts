@@ -19,6 +19,7 @@ interface ProfileState {
   createProfile: (name: string, avatar: string | null, color: string | null, pin?: string | null) => Promise<Profile>;
   selectProfile: (id: string) => void;
   deleteProfile: (id: string) => Promise<void>;
+  addXP: (id: string, amount: number) => Promise<void>;
 }
 
 export const useProfileStore = create<ProfileState>((set, get) => ({
@@ -47,12 +48,14 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
         avatar,
         color,
         pin,
+        xp: 0,
+        level: 1,
         created_at: now,
       };
 
       await executeMutation(
-        'INSERT INTO profiles (id, name, avatar, color, pin, created_at) VALUES (?, ?, ?, ?, ?, ?);',
-        [newProfile.id, newProfile.name, newProfile.avatar || null, newProfile.color || null, newProfile.pin || null, newProfile.created_at]
+        'INSERT INTO profiles (id, name, avatar, color, pin, xp, level, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?);',
+        [newProfile.id, newProfile.name, newProfile.avatar || null, newProfile.color || null, newProfile.pin || null, newProfile.xp, newProfile.level, newProfile.created_at]
       );
 
       const currentProfiles = get().profiles;
@@ -91,6 +94,28 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
     } catch (error: any) {
       set({ error: error.message, isLoading: false });
       throw error;
+    }
+  },
+
+  addXP: async (id: string, amount: number) => {
+    try {
+      const { profiles } = get();
+      const profileIndex = profiles.findIndex(p => p.id === id);
+      if (profileIndex === -1) return;
+
+      const profile = profiles[profileIndex];
+      const newXP = Math.max(0, profile.xp + amount);
+      const newLevel = Math.floor(newXP / 100) + 1;
+
+      // Optimistic update
+      const updatedProfiles = [...profiles];
+      updatedProfiles[profileIndex] = { ...profile, xp: newXP, level: newLevel };
+      set({ profiles: updatedProfiles });
+
+      // Persist
+      await executeMutation('UPDATE profiles SET xp = ?, level = ? WHERE id = ?', [newXP, newLevel, id]);
+    } catch (e) {
+      console.error('Failed to add XP', e);
     }
   },
 }));

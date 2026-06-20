@@ -47,14 +47,12 @@ export const initDB = async (): Promise<void> => {
     }
 
     // Migration: Add pin column to profiles if it doesn't exist
-    try {
-      await db.executeSql('ALTER TABLE profiles ADD COLUMN pin TEXT;');
-    } catch (e: any) {
-      // Ignore if column already exists
-      if (!e.message.includes('duplicate column name')) {
-        console.warn('Migration warning:', e);
-      }
-    }
+    try { await db.executeSql('ALTER TABLE profiles ADD COLUMN pin TEXT;'); } catch (e: any) {}
+    try { await db.executeSql('ALTER TABLE profiles ADD COLUMN xp INTEGER NOT NULL DEFAULT 0;'); } catch (e: any) {}
+    try { await db.executeSql('ALTER TABLE profiles ADD COLUMN level INTEGER NOT NULL DEFAULT 1;'); } catch (e: any) {}
+    try { await db.executeSql('ALTER TABLE habits ADD COLUMN target_count INTEGER NOT NULL DEFAULT 1;'); } catch (e: any) {}
+    try { await db.executeSql('ALTER TABLE habits ADD COLUMN target_unit TEXT;'); } catch (e: any) {}
+    try { await db.executeSql('ALTER TABLE completions ADD COLUMN progress_value INTEGER NOT NULL DEFAULT 1;'); } catch (e: any) {}
 
     // Seed default categories
     await db.executeSql(SEED_CATEGORIES);

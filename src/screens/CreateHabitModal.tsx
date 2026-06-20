@@ -16,6 +16,8 @@ import { triggerHaptic } from '../utils/haptics';
 
 import { HABIT_ICONS, HABIT_COLORS } from '../constants/habitCategories';
 
+const POPULAR_EMOJIS = ['🔥', '💧', '🏃', '🧘', '📚', '💰', '💪', '🍎', '💤', '🧠', '✍️', '🎨', '🚀', '🎯', '🌿', '☕️'];
+
 type Props = RootStackScreenProps<'CreateHabitModal'>;
 
 interface Category {
@@ -48,6 +50,8 @@ export default function CreateHabitModal({ route, navigation }: Props) {
 
   const [title, setTitle] = useState('');
   const [goal, setGoal] = useState('');
+  const [targetCount, setTargetCount] = useState('1');
+  const [targetUnit, setTargetUnit] = useState('');
   const [frequency, setFrequency] = useState<Frequency>('daily');
   const [iconType, setIconType] = useState<'icon'|'emoji'>('icon');
   const [selectedIcon, setSelectedIcon] = useState('book');
@@ -86,6 +90,8 @@ export default function CreateHabitModal({ route, navigation }: Props) {
       category_id: selectedCategoryId,
       title: title.trim(),
       description: goal.trim(),
+      target_count: parseInt(targetCount, 10) || 1,
+      target_unit: targetUnit.trim() || undefined,
       frequency,
       color: selectedColor,
       icon: iconType === 'emoji' ? selectedEmoji : selectedIcon,
@@ -141,6 +147,30 @@ export default function CreateHabitModal({ route, navigation }: Props) {
           onChangeText={setTitle}
         />
 
+        <View style={styles.row}>
+          <View style={{ flex: 1, marginRight: 8 }}>
+            <Text style={[styles.label, { color: theme.textSecondary }]}>Daily Target</Text>
+            <TextInput
+              style={[styles.input, { backgroundColor: theme.surface, color: theme.text }]}
+              placeholder="e.g. 1, 30, 8"
+              keyboardType="number-pad"
+              placeholderTextColor={theme.textSecondary}
+              value={targetCount}
+              onChangeText={setTargetCount}
+            />
+          </View>
+          <View style={{ flex: 2 }}>
+            <Text style={[styles.label, { color: theme.textSecondary }]}>Unit (Optional)</Text>
+            <TextInput
+              style={[styles.input, { backgroundColor: theme.surface, color: theme.text }]}
+              placeholder="e.g. times, mins, glasses"
+              placeholderTextColor={theme.textSecondary}
+              value={targetUnit}
+              onChangeText={setTargetUnit}
+            />
+          </View>
+        </View>
+
         <Text style={[styles.label, { color: theme.textSecondary }]}>Category</Text>
         <View style={styles.wrapContainer}>
           {categories.map(cat => {
@@ -166,7 +196,7 @@ export default function CreateHabitModal({ route, navigation }: Props) {
           })}
         </View>
 
-        <View style={[styles.segmentedControl, { backgroundColor: isDarkMode ? theme.surface : '#F1F5F9', marginBottom: 16 }]}>
+        <View style={[styles.segmentedControl, { backgroundColor: isDarkMode ? theme.surface : '#F1F5F9', marginBottom: 16, marginTop: 24 }]}>
           <TouchableOpacity
             style={[styles.segmentBtn, iconType === 'icon' && [styles.segmentBtnSelected, { backgroundColor: theme.surface }]]}
             onPress={() => setIconType('icon')}
@@ -214,27 +244,43 @@ export default function CreateHabitModal({ route, navigation }: Props) {
             })}
           </View>
         ) : (
-          <View style={{ alignItems: 'flex-start' }}>
-            <TextInput
-              style={[styles.emojiInput, { backgroundColor: theme.surface, color: theme.text, borderColor: theme.primary }]}
-              value={selectedEmoji}
-              onChangeText={(text) => {
-                // Ensure only 1-2 characters (emoji) are kept
-                if (text.length > 0) {
-                  // get the last character/emoji entered
-                  const arr = Array.from(text);
-                  setSelectedEmoji(arr[arr.length - 1]);
-                } else {
-                  setSelectedEmoji('');
-                }
-              }}
-              placeholder="🔥"
-              placeholderTextColor={theme.textSecondary}
-              maxLength={4} // Some emojis use multiple characters
-            />
-            <Text style={{ fontSize: 13, color: theme.textSecondary, marginTop: 8 }}>
-              Type any single emoji here
-            </Text>
+          <View>
+            <View style={styles.wrapContainer}>
+              {POPULAR_EMOJIS.map((emoji, index) => {
+                const isSelected = selectedEmoji === emoji;
+                return (
+                  <TouchableOpacity
+                    key={index}
+                    style={[
+                      styles.emojiBox,
+                      { backgroundColor: isSelected ? theme.primary : theme.surface },
+                      isSelected && { shadowColor: theme.primary, shadowOpacity: 0.3 }
+                    ]}
+                    onPress={() => {
+                      triggerHaptic('selection');
+                      setSelectedEmoji(emoji);
+                    }}
+                  >
+                    <Text style={{ fontSize: 24 }}>{emoji}</Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 16 }}>
+              <Text style={{ color: theme.textSecondary, marginRight: 12, fontWeight: '500' }}>Or type your own:</Text>
+              <TextInput
+                style={[styles.smallEmojiInput, { backgroundColor: theme.surface, color: theme.text }]}
+                value={POPULAR_EMOJIS.includes(selectedEmoji) ? '' : selectedEmoji}
+                onChangeText={(text) => {
+                  if (text.length > 0) {
+                    const arr = Array.from(text);
+                    setSelectedEmoji(arr[arr.length - 1]);
+                  }
+                }}
+                placeholder="✨"
+                placeholderTextColor={theme.textSecondary}
+              />
+            </View>
           </View>
         )}
 
@@ -336,10 +382,11 @@ export default function CreateHabitModal({ route, navigation }: Props) {
           />
         )}
 
-        <Text style={[styles.label, { color: theme.textSecondary }]}>Goal (Optional)</Text>
+        <Text style={[styles.label, { color: theme.textSecondary }]}>Notes (Optional)</Text>
         <TextInput
-          style={[styles.input, { backgroundColor: theme.surface, color: theme.text }]}
-          placeholder="e.g. 30 minutes"
+          style={[styles.input, { backgroundColor: theme.surface, color: theme.text, height: 100 }]}
+          placeholder="Why are you building this habit?"
+          multiline
           placeholderTextColor={theme.textSecondary}
           value={goal}
           onChangeText={setGoal}
@@ -405,6 +452,11 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 2,
   },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    width: '100%',
+  },
   inputField: {
     height: 56,
     borderRadius: 16,
@@ -465,16 +517,33 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  emojiInput: {
-    fontSize: 48,
-    width: 80,
-    height: 80,
+  emojiBox: {
+    width: 52,
+    height: 52,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  smallEmojiInput: {
+    width: 52,
+    height: 52,
+    fontSize: 24,
     textAlign: 'center',
-    borderRadius: 24,
-    borderWidth: 2,
+    borderRadius: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
   },
   segmentedControl: {
     flexDirection: 'row',
+    width: '100%',
     borderRadius: 16,
     padding: 4,
     height: 52,

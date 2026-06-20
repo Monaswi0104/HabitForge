@@ -46,7 +46,7 @@ export default function SplashScreen({ navigation }: Props) {
             return;
           }
         }
-        navigation.replace('CreateProfile');
+        navigation.replace('Onboarding');
       } else if (!currentStore.activeProfileId) {
         navigation.replace('ProfileSelect');
       } else {

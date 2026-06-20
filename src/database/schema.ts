@@ -20,6 +20,8 @@ export const CREATE_TABLES = `
     avatar      TEXT,                       -- Emoji or image URI
     color       TEXT,                       -- Hex accent color e.g. "#6366F1"
     pin         TEXT,                       -- 4-digit PIN lock
+    xp          INTEGER NOT NULL DEFAULT 0, -- Total XP earned
+    level       INTEGER NOT NULL DEFAULT 1, -- Current level
     created_at  TEXT NOT NULL               -- ISO 8601 e.g. "2024-06-17T10:00:00Z"
   );
 
@@ -48,6 +50,8 @@ export const CREATE_TABLES = `
     color         TEXT,                     -- Per-habit accent color
     icon          TEXT,                     -- Lucide icon name
     reminder_time TEXT,                     -- "HH:MM" e.g. "08:00" (nullable = no reminder)
+    target_count  INTEGER NOT NULL DEFAULT 1, -- Number of times/mins to complete
+    target_unit   TEXT,                     -- Optional unit string (e.g. 'times', 'mins', 'ml')
     is_archived   INTEGER NOT NULL          -- 0 = active, 1 = archived
                   DEFAULT 0
                   CHECK (is_archived IN (0, 1)),
@@ -81,6 +85,7 @@ export const CREATE_TABLES = `
     habit_id     TEXT NOT NULL,            -- FK → habits.id
     date         TEXT NOT NULL,            -- "YYYY-MM-DD" e.g. "2024-06-17"
     completed_at TEXT NOT NULL,            -- ISO 8601 full timestamp
+    progress_value INTEGER NOT NULL DEFAULT 1, -- Amount completed towards target
     note         TEXT,                     -- Optional completion note
     FOREIGN KEY (habit_id) REFERENCES habits(id) ON DELETE CASCADE,
     UNIQUE (habit_id, date)                -- One completion per habit per day
