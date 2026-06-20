@@ -11,7 +11,7 @@
 
   <br />
 
-  <img src="https://raw.githubusercontent.com/Monaswi0104/HabitForge/main/src/assets/screenshots/demo.gif" alt="HabitForge Demo" width="250" />
+  
 
   <br />
 
