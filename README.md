@@ -11,6 +11,10 @@
 
   <br />
 
+  <img src="https://raw.githubusercontent.com/Monaswi0104/HabitForge/main/src/assets/screenshots/demo.gif" alt="HabitForge Demo" width="250" />
+
+  <br />
+
   [![React Native](https://img.shields.io/badge/React_Native_0.86-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactnative.dev/)
   [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
   [![SQLite](https://img.shields.io/badge/SQLite-07405E?style=for-the-badge&logo=sqlite&logoColor=white)](https://www.sqlite.org/index.html)
@@ -33,16 +37,16 @@ No subscriptions. No cloud syncing delays. No ads. Just you and the forge.
 <div align="center">
   <table>
     <tr>
-      <td align="center"><b>Home Screen</b><br><img src="./src/assets/screenshots/home_screen.png" width="220" /></td>
-      <td align="center"><b>Progress Screen</b><br><img src="./src/assets/screenshots/progress_screen.png" width="220" /></td>
-      <td align="center"><b>Habit Details Screen</b><br><img src="./src/assets/screenshots/habit_details.png" width="220" /></td>
-      <td align="center"><b>Create New Habit Screen</b><br><img src="./src/assets/screenshots/create_habit_screen.png" width="220" /></td>
+      <td align="center"><b>Home Screen</b><br><img src="https://raw.githubusercontent.com/Monaswi0104/HabitForge/main/src/assets/screenshots/home_screen.png" width="220" /></td>
+      <td align="center"><b>Progress Screen</b><br><img src="https://raw.githubusercontent.com/Monaswi0104/HabitForge/main/src/assets/screenshots/progress_screen.png" width="220" /></td>
+      <td align="center"><b>Habit Details Screen</b><br><img src="https://raw.githubusercontent.com/Monaswi0104/HabitForge/main/src/assets/screenshots/habit_details.png" width="220" /></td>
+      <td align="center"><b>Create New Habit Screen</b><br><img src="https://raw.githubusercontent.com/Monaswi0104/HabitForge/main/src/assets/screenshots/create_habit_screen.png" width="220" /></td>
     </tr>
     <tr>
-      <td align="center"><b>Profile Select Screen</b><br><img src="./src/assets/screenshots/profile_select_screen.png" width="220" /></td>
-      <td align="center"><b>Profile Screen</b><br><img src="./src/assets/screenshots/profile_screen.png" width="220" /></td>
-      <td align="center"><b>Settings Screen</b><br><img src="./src/assets/screenshots/settings_screen.png" width="220" /></td>
-      <td align="center"><b>Splash Screen</b><br><img src="./src/assets/screenshots/splash_screen.png" width="220" /></td>
+      <td align="center"><b>Profile Select Screen</b><br><img src="https://raw.githubusercontent.com/Monaswi0104/HabitForge/main/src/assets/screenshots/profile_select_screen.png" width="220" /></td>
+      <td align="center"><b>Profile Screen</b><br><img src="https://raw.githubusercontent.com/Monaswi0104/HabitForge/main/src/assets/screenshots/profile_screen.png" width="220" /></td>
+      <td align="center"><b>Settings Screen</b><br><img src="https://raw.githubusercontent.com/Monaswi0104/HabitForge/main/src/assets/screenshots/settings_screen.png" width="220" /></td>
+      <td align="center"><b>Splash Screen</b><br><img src="https://raw.githubusercontent.com/Monaswi0104/HabitForge/main/src/assets/screenshots/splash_screen.png" width="220" /></td>
     </tr>
   </table>
 </div>
