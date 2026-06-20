@@ -5,8 +5,8 @@ import {
   TouchableOpacity,
   useColorScheme,
   Alert,
+  Animated,
 } from 'react-native';
-import { MotiView } from 'moti';
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -38,19 +38,31 @@ function CustomTabBarButton({ children, onPress }: any) {
   const theme = isDark ? Colors.dark : Colors.light;
   const [isPressed, setIsPressed] = useState(false);
 
+  const scale = React.useRef(new Animated.Value(1)).current;
+
   return (
     <TouchableOpacity
       activeOpacity={0.9}
       style={styles.fabContainer}
       onPress={onPress}
-      onPressIn={() => setIsPressed(true)}
-      onPressOut={() => setIsPressed(false)}
+      onPressIn={() => {
+        setIsPressed(true);
+        Animated.spring(scale, {
+          toValue: 0.9,
+          useNativeDriver: true,
+          friction: 5,
+        }).start();
+      }}
+      onPressOut={() => {
+        setIsPressed(false);
+        Animated.spring(scale, {
+          toValue: 1,
+          useNativeDriver: true,
+          friction: 5,
+        }).start();
+      }}
     >
-      <MotiView
-        from={{ scale: 1 }}
-        animate={{ scale: isPressed ? 0.9 : 1 }}
-        transition={{ type: 'spring', damping: 15 }}
-      >
+      <Animated.View style={{ transform: [{ scale }] }}>
         <View
           style={[
             styles.fab,
@@ -63,7 +75,7 @@ function CustomTabBarButton({ children, onPress }: any) {
             strokeWidth={2.8}
           />
         </View>
-      </MotiView>
+      </Animated.View>
     </TouchableOpacity>
   );
 }

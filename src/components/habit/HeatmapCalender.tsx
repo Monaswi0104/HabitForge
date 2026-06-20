@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
+import Animated, { FadeIn } from 'react-native-reanimated';
 import { format, subDays, eachDayOfInterval } from 'date-fns';
 import { useSettingsStore } from '../../store/settingsStore';
 import { Colors } from '../../constants/colors';
-import { MotiView } from 'moti';
 
 interface HeatmapCalendarProps {
   completions: { date: string }[]; // array of 'yyyy-MM-dd' strings
@@ -39,10 +39,6 @@ export default function HeatmapCalendar({ completions, days = 90, color }: Heatm
     columns.push(currentColumn);
   }
 
-  const getOpacityForDate = (dateStr: string) => {
-    return completedSet.has(dateStr) ? 1 : 0.1;
-  };
-
   return (
     <View style={styles.container}>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
@@ -51,12 +47,11 @@ export default function HeatmapCalendar({ completions, days = 90, color }: Heatm
             {col.map((date, rowIndex) => {
               const dateStr = format(date, 'yyyy-MM-dd');
               const isCompleted = completedSet.has(dateStr);
+              const index = colIndex * 7 + rowIndex;
               return (
-                <MotiView
+                <Animated.View
                   key={`cell-${dateStr}`}
-                  from={{ opacity: 0, scale: 0.5 }}
-                  animate={{ opacity: getOpacityForDate(dateStr), scale: 1 }}
-                  transition={{ type: 'spring', delay: (colIndex * 30) + (rowIndex * 10), damping: 15 }}
+                  entering={FadeIn.delay(Math.min(index * 20, 1000))}
                   style={[
                     styles.cell,
                     {
