@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="./src/assets/mockups/readme_banner.png" alt="HabitForge Banner" width="70%" />
+  <img src="./src/assets/mockups/readme_banner_v2.png" alt="HabitForge Banner" width="60%" />
 
   <br />
   <br />
