@@ -20,6 +20,7 @@ import { MainTabParamList } from '../types/navigation.types';
 import { Colors } from '../constants/colors';
 
 import { useSettingsStore } from '../store/settingsStore';
+import { useProfileStore } from '../store/profileStore';
 import {
   Home,
   BarChart2,
@@ -73,6 +74,8 @@ export default function TabNavigator({ navigation }: any) {
 
   const insets = useSafeAreaInsets();
 
+  const { selectProfile } = useProfileStore();
+
   useEffect(() => {
     const unsubscribe = navigation.addListener('beforeRemove', (e: any) => {
       // Allow navigation if it's not a back action
@@ -91,7 +94,13 @@ export default function TabNavigator({ navigation }: any) {
           {
             text: 'Logout',
             style: 'destructive',
-            onPress: () => navigation.dispatch(e.data.action),
+            onPress: () => {
+              selectProfile('');
+              navigation.reset({
+                index: 0,
+                routes: [{ name: 'ProfileSelect' }],
+              });
+            },
           },
         ]
       );

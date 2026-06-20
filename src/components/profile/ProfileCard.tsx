@@ -12,6 +12,9 @@ interface ProfileCardProps {
   xpInCurrentLevel: number;
   xpProgress: number;
   xpPerLevel: number;
+  streak?: number;
+  completion?: number;
+  activeHabits?: number;
 }
 
 export default function ProfileCard({
@@ -20,7 +23,10 @@ export default function ProfileCard({
   currentLevel,
   xpInCurrentLevel,
   xpProgress,
-  xpPerLevel
+  xpPerLevel,
+  streak = 0,
+  completion = 0,
+  activeHabits = 0
 }: ProfileCardProps) {
   const isDarkMode = useSettingsStore((state: any) => state.isDarkMode);
   const theme = isDarkMode ? Colors.dark : Colors.light;
@@ -58,6 +64,23 @@ export default function ProfileCard({
         </View>
         <View style={[styles.xpBarBg, { backgroundColor: theme.border }]}>
           <Animated.View style={[styles.xpBarFill, { backgroundColor: theme.primary }, progressStyle]} />
+        </View>
+      </View>
+
+      <View style={[styles.statsRow, { borderTopColor: theme.border }]}>
+        <View style={styles.statItem}>
+          <Text style={styles.statEmoji}>🔥</Text>
+          <Text style={[styles.statValue, { color: theme.text }]}>{streak} Days</Text>
+        </View>
+        <View style={styles.statDivider} />
+        <View style={styles.statItem}>
+          <Text style={styles.statEmoji}>🎯</Text>
+          <Text style={[styles.statValue, { color: theme.text }]}>{activeHabits} Active</Text>
+        </View>
+        <View style={styles.statDivider} />
+        <View style={styles.statItem}>
+          <Text style={styles.statEmoji}>✨</Text>
+          <Text style={[styles.statValue, { color: theme.text }]}>{Math.round(completion)}%</Text>
         </View>
       </View>
     </Animated.View>
@@ -133,6 +156,32 @@ const styles = StyleSheet.create({
   },
   xpBarFill: {
     height: '100%',
-    borderRadius: 5,
+    borderRadius: 4,
+  },
+  statsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginTop: 20,
+    paddingTop: 20,
+    borderTopWidth: 1,
+  },
+  statItem: {
+    flex: 1,
+    alignItems: 'center',
+    gap: 4,
+  },
+  statEmoji: {
+    fontSize: 16,
+  },
+  statValue: {
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  statDivider: {
+    width: 1,
+    height: '100%',
+    backgroundColor: '#E5E7EB',
+    opacity: 0.5,
   },
 });

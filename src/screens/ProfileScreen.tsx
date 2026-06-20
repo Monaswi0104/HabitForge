@@ -58,6 +58,9 @@ export default function ProfileScreen({ navigation }: any) {
           xpInCurrentLevel={xpInCurrentLevel}
           xpProgress={xpProgress}
           xpPerLevel={XP_PER_LEVEL}
+          streak={overallLongestStreak}
+          completion={totalHabits > 0 ? (totalCompletions / (totalHabits * 30)) * 100 : 0}
+          activeHabits={habitsWithAtLeastOneCompletion}
         />
 
         {/* Badges Section */}
@@ -177,8 +180,8 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
     elevation: 4,
   },
   avatarText: {

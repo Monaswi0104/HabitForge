@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, useColorScheme, Alert } from 'react-native';
 import { RootStackScreenProps } from '../types/navigation.types';
 import { Colors } from '../constants/colors';
-import { ArrowLeft, MoreHorizontal, Book, Dumbbell, Droplets, Brain, Pencil, Heart, Flame, CheckCircle, Calendar, Clock, Target, TrendingUp, Share2 } from 'lucide-react-native';
+import { ArrowLeft, MoreHorizontal, Book, Dumbbell, Droplets, Heart, Flame, CheckCircle, Calendar, Clock, Target, TrendingUp, Share2, Code, Wallet, Sparkles, GraduationCap, Activity, BookOpen } from 'lucide-react-native';
 import ViewShot from 'react-native-view-shot';
 import Share from 'react-native-share';
 import { useHabitStore } from '../store/habitStore';
@@ -15,14 +15,20 @@ import { format } from 'date-fns';
 type Props = RootStackScreenProps<'HabitDetail'>;
 
 const renderIcon = (name: string, color: string, size = 24) => {
+  if (name && (name.match(/[\p{Emoji}]/u) || name.length <= 2) && name !== 'book' && name !== 'code') {
+    return <Text style={{ fontSize: size - 4 }}>{name}</Text>;
+  }
   switch (name) {
     case 'book': return <Book color={color} size={size} />;
     case 'dumbbell': return <Dumbbell color={color} size={size} />;
     case 'droplets': return <Droplets color={color} size={size} />;
-    case 'brain': return <Brain color={color} size={size} />;
-    case 'pencil': return <Pencil color={color} size={size} />;
     case 'heart': return <Heart color={color} size={size} />;
-    default: return <Book color={color} size={size} />;
+    case 'code': return <Code color={color} size={size} />;
+    case 'wallet': return <Wallet color={color} size={size} />;
+    case 'sparkles': return <Sparkles color={color} size={size} />;
+    case 'graduation-cap': return <GraduationCap color={color} size={size} />;
+    case 'activity': return <Activity color={color} size={size} />;
+    default: return <BookOpen color={color} size={size} />;
   }
 };
 

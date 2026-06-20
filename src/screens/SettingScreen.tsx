@@ -41,7 +41,10 @@ export default function SettingScreen({ navigation }: any) {
       { text: 'Cancel', style: 'cancel' },
       { text: 'Logout', style: 'destructive', onPress: () => {
         selectProfile('');
-        navigation.navigate('ProfileSelect');
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'ProfileSelect' }],
+        });
       }}
     ]);
   };
@@ -59,7 +62,10 @@ export default function SettingScreen({ navigation }: any) {
           onPress: async () => {
             if (activeProfileId) {
               await deleteProfile(activeProfileId);
-              navigation.navigate('ProfileSelect');
+              navigation.reset({
+                index: 0,
+                routes: [{ name: 'ProfileSelect' }],
+              });
             }
           }
         }

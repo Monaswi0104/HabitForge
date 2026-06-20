@@ -1,6 +1,6 @@
 import { useFocusEffect } from '@react-navigation/native';
-import React, { useCallback, useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, FlatList, useColorScheme, TouchableOpacity, Alert } from 'react-native';
+import React, { useCallback, useState, useEffect, useRef, useMemo } from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, Image } from 'react-native';
 import { useHabitStore } from '../store/habitStore';
 import { useProfileStore } from '../store/profileStore';
 import { Colors } from '../constants/colors';
@@ -8,7 +8,6 @@ import HabitCard from '../components/habit/HabitCard';
 import { ProgressRing } from '../components/profile/ProgressRing';
 import { format } from 'date-fns';
 import { calculateStreak } from '../utils/streakCalculator';
-import { executeQuery } from '../database/db';
 import { HabitDay } from '../types/habit.types';
 import { Bell, Flame, TrendingUp, CheckCircle2, Plus, CheckSquare } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -21,9 +20,8 @@ export default function HomeScreen({ navigation }: any) {
   const insets = useSafeAreaInsets();
 
   const { activeProfileId, profiles } = useProfileStore();
-  const { habits, completions, loadHabits, toggleCompletion, completeAll } = useHabitStore();
+  const { habits, completions, habitDays, loadHabits, toggleCompletion, completeAll } = useHabitStore();
 
-  const [habitDays, setHabitDays] = useState<HabitDay[]>([]);
   const [showConfetti, setShowConfetti] = useState(false);
   const lastAlertTimeRef = useRef<Map<string, number>>(new Map());
   const todayStr = format(new Date(), 'yyyy-MM-dd');
@@ -35,9 +33,6 @@ export default function HomeScreen({ navigation }: any) {
     useCallback(() => {
       if (activeProfileId) {
         loadHabits(activeProfileId);
-        executeQuery<HabitDay>('SELECT * FROM habit_days').then(days => {
-          setHabitDays(days);
-        });
       }
     }, [activeProfileId])
   );
@@ -74,6 +69,16 @@ export default function HomeScreen({ navigation }: any) {
     if (hour < 17) return 'Good Afternoon';
     return 'Good Evening';
   };
+
+  const QUOTES = [
+    "Small steps every day.",
+    "Consistency beats intensity.",
+    "You've got this."
+  ];
+
+  const randomQuote = useMemo(() => {
+    return QUOTES[Math.floor(Math.random() * QUOTES.length)];
+  }, [todayStr]);
 
   const handleToggle = (habitId: string, isCurrentlyCompleted: boolean) => {
     toggleCompletion(habitId, todayStr);
@@ -162,11 +167,21 @@ export default function HomeScreen({ navigation }: any) {
       {/* Header */}
       <View style={[styles.header, { paddingTop: Math.max(insets.top + 8, 48) }]}>
         <View>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 14 }}>
+            <Image 
+              source={require('../assets/images/app_icon.png')} 
+              style={{ width: 34, height: 34, borderRadius: 8, marginRight: 10 }} 
+            />
+            <Text style={{ fontSize: 20, fontWeight: '800', color: theme.text, letterSpacing: -0.5 }}>HabitForge</Text>
+          </View>
           <Text style={[styles.greeting, { color: theme.textSecondary }]}>
             {getGreeting()},
           </Text>
           <Text style={[styles.nameTitle, { color: theme.text }]}>
             {activeProfile?.name || 'User'}
+          </Text>
+          <Text style={[styles.quoteText, { color: theme.textSecondary, marginTop: 4, fontSize: 14, opacity: 0.8 }]}>
+            {randomQuote}
           </Text>
         </View>
         <TouchableOpacity 
@@ -316,6 +331,11 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     letterSpacing: -0.5,
   },
+  quoteText: {
+    fontSize: 14,
+    marginTop: 4,
+    fontStyle: 'italic',
+  },
   bellBtn: {
     width: 48,
     height: 48,
@@ -355,9 +375,9 @@ const styles = StyleSheet.create({
     padding: 18,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 5,
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
   },
   summaryCardHeader: {
     flexDirection: 'row',

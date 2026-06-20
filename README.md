@@ -1,155 +1,131 @@
 <div align="center">
-  <img src="./src/assets/images/logo.png" alt="HabitForge Logo" width="120" />
-  <h1>HabitForge 🚀</h1>
-  <p><b>Level Up Your Life, One Habit at a Time.</b></p>
-  
-  ![React Native](https://img.shields.io/badge/React_Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
-  ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
-  ![SQLite](https://img.shields.io/badge/SQLite-07405E?style=for-the-badge&logo=sqlite&logoColor=white)
-  ![Android](https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white)
-  ![iOS](https://img.shields.io/badge/iOS-000000?style=for-the-badge&logo=ios&logoColor=white)
+  <img src="./src/assets/mockups/readme_banner.png" alt="HabitForge Banner" width="100%" />
+
+  <br />
+  <br />
+
+  **Forging better habits, one day at a time.** <br />
+  A premium, offline-first, deeply analytical habit tracking application built with React Native.
+
+  <br />
+
+  [![React Native](https://img.shields.io/badge/React_Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactnative.dev/)
+  [![SQLite](https://img.shields.io/badge/SQLite-07405E?style=for-the-badge&logo=sqlite&logoColor=white)](https://www.sqlite.org/index.html)
+  [![Reanimated](https://img.shields.io/badge/Reanimated_3-Black?style=for-the-badge&logo=react&logoColor=white)](https://docs.swmansion.com/react-native-reanimated/)
+  [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+
+  <br />
 </div>
 
-<br/>
+## 🔥 Why HabitForge?
 
-> **Note**: This is a **Portfolio Project** built to demonstrate expertise in modern React Native development, offline-first architecture, local databases, and complex state management. It is not currently published on the App Store or Google Play.
+Most habit trackers are either too simple, losing your interest after a week, or too complex, feeling like a chore to update. **HabitForge** strikes the perfect balance. It combines a gorgeous, fluid, glassmorphic UI with incredibly deep, local-first SQLite analytics that actually teach you about your behavior.
 
----
-
-## 📖 About The App
-
-**HabitForge** is a beautiful, fully offline React Native application designed to help you build positive habits and break bad ones. Built with a focus on speed, privacy, and gamification, HabitForge stores everything locally on your device—no cloud subscriptions, no internet required. 
-
-Whether you're sharing an iPad with your family or tracking personal goals on your phone, HabitForge's unique **Multi-Profile System** with secure PIN locks ensures that everyone's progress remains completely private and individualized.
-
-## 📱 Screenshots
-
-| <img src="./docs/screenshots/ProfileSelectScreen.png" width="200" /> | <img src="./docs/screenshots/HomeScreen.png" width="200" /> | <img src="./docs/screenshots/ProgressScreen.png" width="200" /> | <img src="./docs/screenshots/ProfileScreen.png" width="200" /> |
-|:---:|:---:|:---:|:---:|
-| **Profile Select** | **Home Screen** | **Progress Screen** | **Profile Screen** |
-
-<br/>
-
-| <img src="./docs/screenshots/SettingsScreen.png" width="200" /> |
-|:---:|
-| **Settings Screen** |
+No subscriptions. No cloud syncing delays. Just you and the forge.
 
 ---
 
-## ✨ Key Features
+## ✨ Features
 
-- 👥 **Multi-Profile Support**: Create unlimited profiles on a single device. Secure your profile with a 4-digit PIN!
-- 📊 **Dynamic Heatmaps**: Visually track your daily completion progress through beautiful, GitHub-style activity heatmaps.
-- 🔔 **Smart Local Notifications**: Powered by Notifee, native OS alarms ensure you never miss a habit. Get reliable high-priority banners even when the app is minimized or killed.
-- 🎮 **Gamification & XP System**: Earn experience points (XP) for completing habits. Level up your character and earn achievement badges like *Early Bird*, *Consistent*, and *Achiever*!
-- 📱 **Offline-First Storage**: 100% of your data is securely stored locally using robust SQLite. Fast, private, and independent of network connections.
-- 🎨 **Beautiful UI & Micro-Animations**: A highly polished interface with a buttery smooth dark/light mode toggle, animated transitions, and confetti celebrations powered by Reanimated.
-- 🛠 **Bulk Actions**: A smooth multi-select mode in the 'All Habits' screen allows you to complete or delete multiple habits simultaneously.
+<table>
+  <tr>
+    <td width="50%">
+      <img src="./src/assets/mockups/mockup_home.png" alt="Home Screen Mockup" width="100%" />
+    </td>
+    <td width="50%" valign="center">
+      <h3>Fluid, Premium UI</h3>
+      <p>Every interaction is carefully crafted using React Native Reanimated. From the spring-physics <strong>completion rings</strong> to the deeply satisfying gradient buttons and subtle glassmorphic shadows, the app is designed to wow.</p>
+      <ul>
+        <li>Animated Completion Rings</li>
+        <li>Smooth MotiView Entrances</li>
+        <li>Subtle Glass Shadows</li>
+        <li>Haptic Feedback on Interactions</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="center">
+      <h3>Deep, Actionable Analytics</h3>
+      <p>The Statistics Dashboard crunches your SQLite data locally to give you real insights without sending your data to the cloud.</p>
+      <ul>
+        <li><strong>Average Completion Time</strong>: See exactly when you usually complete habits (e.g., 9:30 AM).</li>
+        <li><strong>GitHub-style Heatmaps</strong>: Visualize your consistency over the last 90 days.</li>
+        <li><strong>Category Distribution</strong>: Stacked bar charts of your habit domains.</li>
+        <li>Current & Longest Streaks</li>
+      </ul>
+    </td>
+    <td width="50%">
+      <img src="./src/assets/mockups/mockup_stats.png" alt="Statistics Screen Mockup" width="100%" />
+    </td>
+  </tr>
+</table>
 
----
+## 🛠️ Tech Stack & Architecture
 
-## 🏗 System Architecture
+HabitForge is built for performance and maintainability.
 
-HabitForge follows a modular, decoupled architecture that separates UI logic from data persistence and background tasks.
-
-### 1. Presentation Layer (UI)
-- **React Native & React Navigation**: Handles routing (Stack and Bottom Tabs).
-- **Lucide Icons & Reanimated**: Powers the fluid micro-interactions and iconography.
-- **Theming Engine**: Dynamic context-free theming built directly into components, allowing instantaneous Light/Dark mode switching without app reloads.
-
-### 2. State Management Layer
-- **Zustand**: A fast, unopinionated state manager used to coordinate data between the SQLite database and the UI.
-- **Store Slices**: `useHabitStore`, `useProfileStore`, and `useSettingsStore` isolate domain logic and provide optimistic UI updates to ensure 60fps responsiveness.
-
-### 3. Data Persistence Layer (SQLite)
-A local, relational SQL database (`react-native-sqlite-storage`) acts as the single source of truth.
-- **`profiles` table**: Manages users, colors, and encrypted/hashed PINs.
-- **`habits` table**: Defines the core habit logic, frequency (`daily` vs `weekly`), and UI colors.
-- **`habit_days` table**: A relational junction table specifying exactly which days of the week a specific habit occurs.
-- **`completions` table**: Logs immutable timestamped events whenever a habit is marked as done.
-
-### 4. Background Services Layer
-- **Notification Service**: Integrates `@notifee/react-native`. It listens to the `useHabitStore` and asynchronously schedules native Android/iOS background timestamp triggers for future dates based on the user's selected reminder times.
-
----
-
-## 🛠 Tech Stack
-
-### Core Technologies
-- **[React Native](https://reactnative.dev)** (v0.86.0) - Cross-platform mobile framework.
-- **[TypeScript](https://www.typescriptlang.org/)** - For type-safe code and robust refactoring.
-- **[SQLite](https://github.com/andpor/react-native-sqlite-storage)** - For relational, offline-first data persistence.
-
-### Essential Libraries
-- **Navigation**: `@react-navigation/native` & `@react-navigation/bottom-tabs`
-- **State**: `zustand`
-- **Notifications**: `@notifee/react-native`
-- **Animations**: `react-native-reanimated` & `react-native-confetti-cannon`
-- **Tactile Feedback**: `react-native-haptic-feedback`
-- **Date Parsing**: `date-fns`
+- **Frontend**: React Native (Bare Workflow)
+- **Language**: TypeScript (Strict Mode)
+- **State Management**: Zustand (blazing fast, boilerplate-free)
+- **Local Database**: `react-native-sqlite-storage` (Full 3NF Normalized Schema)
+- **Animations**: `react-native-reanimated` v3 & `moti`
 - **Icons**: `lucide-react-native`
+- **Styling**: Context-aware dynamic theming (Dark/Light mode support)
+
+### Database Schema (3NF)
+We use a strictly normalized SQLite database:
+1. `profiles`: Support for multi-user/family usage.
+2. `categories`: Seeded domains (Health, Finance, etc.).
+3. `habits`: Core habit definitions.
+4. `habit_days`: Resolves 1NF violations for weekly habit schedules.
+5. `completions`: The raw log driving the powerful analytics engine.
+
+---
+
+## 🎨 Branding & Assets
+
+Check out our [LOGO_GUIDELINES.md](./LOGO_GUIDELINES.md) to learn about the visual identity, typography, and color palette (Indigo, Emerald, and Forging Orange) that give HabitForge its premium startup feel. 
+
+Visual assets (App Icons, Splash Screens, Banners) can be found in `src/assets/`.
 
 ---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
-Make sure you have completed the [React Native Environment Setup](https://reactnative.dev/docs/set-up-your-environment) for your operating system (Node.js, JDK, Android Studio / Xcode).
+- Node.js (v18+)
+- Ruby (for iOS CocoaPods)
+- Android Studio & Xcode
 
 ### Installation
 
-1. **Clone the repository**:
+1. **Clone the repository**
    ```bash
    git clone https://github.com/Monaswi0104/HabitForge.git
    cd HabitForge
    ```
 
-2. **Install JavaScript dependencies**:
+2. **Install dependencies**
    ```bash
    npm install
    ```
 
-3. **Install iOS Pods (macOS only)**:
+3. **Install iOS Pods** (Mac only)
    ```bash
    cd ios && pod install && cd ..
    ```
 
-### Running the App
-
-Start the Metro bundler:
-```bash
-npm start
-```
-
-Launch the Android emulator:
-```bash
-npm run android
-```
-
-Launch the iOS simulator:
-```bash
-npm run ios
-```
-
-### Testing with Mock Data
-
-If you want to instantly see the app's charts, gamification features, and heatmaps in action without manually creating weeks of habit data, you can generate an offline mock database:
-
-1. Run the included Node script from your terminal:
+4. **Run the app**
    ```bash
-   node scripts/seed.cjs
+   # For iOS
+   npm run ios
+   
+   # For Android
+   npm run android
    ```
-2. The script will generate a massive `src/database/mockData.json` file.
-3. If your app is running in Development mode (`__DEV__`) and you have **0 profiles** (e.g. on a fresh install), the app will seamlessly intercept the launch, parse the JSON file, inject the data natively into SQLite, and instantly present you with 3 fully-loaded test profiles (Alex, Jordan, and Sam) complete with 100 days of randomized completion history!
 
 ---
 
-## 👨‍💻 Developer
-
-Built with ❤️ by Monaswi.
-
-Feel free to explore the code, open issues, or submit pull requests!
-
-## 📝 License
-
-This project is open-source and available under the MIT License.
+<div align="center">
+  <p>Built with ❤️ and ☕️. Strike the iron while it's hot.</p>
+</div>

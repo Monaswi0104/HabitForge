@@ -24,11 +24,11 @@ const seedData = () => {
   ];
 
   const fakeHabits = [
-    { title: 'Drink Water', frequency: 'daily', color: '#3B82F6', icon: 'droplet', category_id: 'cat-1' },
-    { title: 'Morning Run', frequency: 'daily', color: '#F97316', icon: 'zap', category_id: 'cat-2' },
+    { title: 'Drink Water', frequency: 'daily', color: '#3B82F6', icon: 'droplets', category_id: 'cat-1' },
+    { title: 'Morning Run', frequency: 'daily', color: '#F97316', icon: 'activity', category_id: 'cat-2' },
     { title: 'Read 20 Pages', frequency: 'daily', color: '#8B5CF6', icon: 'book', category_id: 'cat-3' },
-    { title: 'Meditate', frequency: 'daily', color: '#10B981', icon: 'wind', category_id: 'cat-4' },
-    { title: 'Journal', frequency: 'daily', color: '#EAB308', icon: 'pen-tool', category_id: 'cat-5' },
+    { title: 'Meditate', frequency: 'daily', color: '#10B981', icon: 'sparkles', category_id: 'cat-4' },
+    { title: 'Journal', frequency: 'daily', color: '#EAB308', icon: 'book', category_id: 'cat-5' },
   ];
 
   const profiles = [];

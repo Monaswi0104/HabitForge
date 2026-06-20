@@ -1,7 +1,8 @@
-import React, { useRef, useEffect } from 'react';
-import { TouchableOpacity, Text, StyleSheet, ActivityIndicator, Animated, ViewStyle, TextStyle } from 'react-native';
+import React, { useRef } from 'react';
+import { TouchableOpacity, Text, StyleSheet, ActivityIndicator, Animated, ViewStyle, TextStyle, View } from 'react-native';
 import { useSettingsStore } from '../../store/settingsStore';
 import { Colors } from '../../constants/colors';
+import LinearGradient from 'react-native-linear-gradient';
 
 interface ButtonProps {
   title: string;
@@ -51,11 +52,11 @@ export default function Button({
   const getBackgroundColor = () => {
     if (disabled) return theme.border;
     switch (variant) {
-      case 'primary': return theme.primary;
+      case 'primary': return 'transparent'; // Handled by LinearGradient
       case 'secondary': return theme.surface;
       case 'outline': return 'transparent';
       case 'danger': return theme.error;
-      default: return theme.primary;
+      default: return 'transparent';
     }
   };
 
@@ -84,6 +85,29 @@ export default function Button({
     }
   };
 
+  const innerContent = (
+    <>
+      {isLoading ? (
+        <ActivityIndicator color={getTextColor()} />
+      ) : (
+        <>
+          {icon && icon}
+          <Text
+            style={[
+              styles.text,
+              { color: getTextColor() },
+              size === 'small' && styles.textSmall,
+              size === 'large' && styles.textLarge,
+              textStyle,
+            ]}
+          >
+            {title}
+          </Text>
+        </>
+      )}
+    </>
+  );
+
   return (
     <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
       <TouchableOpacity
@@ -99,27 +123,24 @@ export default function Button({
             borderColor: getBorderColor(),
             borderWidth: variant === 'outline' ? 1.5 : 0,
             height: getHeight(),
+            overflow: 'hidden',
           },
           style,
         ]}
       >
-        {isLoading ? (
-          <ActivityIndicator color={getTextColor()} />
+        {variant === 'primary' && !disabled ? (
+          <LinearGradient
+            colors={['#7C4DFF', '#5B37FF']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={[StyleSheet.absoluteFill, styles.gradientContent]}
+          >
+            {innerContent}
+          </LinearGradient>
         ) : (
-          <>
-            {icon && icon}
-            <Text
-              style={[
-                styles.text,
-                { color: getTextColor() },
-                size === 'small' && styles.textSmall,
-                size === 'large' && styles.textLarge,
-                textStyle,
-              ]}
-            >
-              {title}
-            </Text>
-          </>
+          <View style={[StyleSheet.absoluteFill, styles.gradientContent]}>
+            {innerContent}
+          </View>
         )}
       </TouchableOpacity>
     </Animated.View>
@@ -129,6 +150,9 @@ export default function Button({
 const styles = StyleSheet.create({
   button: {
     borderRadius: 14,
+    // Note: padding and flex properties moved to gradientContent since it's absoluteFill
+  },
+  gradientContent: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',

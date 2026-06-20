@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, useColorScheme } from 'react-native';
-import { Check, Trash2, Book, Dumbbell, Droplets, Brain, Pencil, Heart, BookOpen } from 'lucide-react-native';
+import { Check, Trash2, Book, Dumbbell, Droplets, Heart, BookOpen, Code, Wallet, Sparkles, GraduationCap, Activity } from 'lucide-react-native';
 import Animated, { 
   useSharedValue, 
   useAnimatedStyle, 
@@ -9,7 +9,6 @@ import Animated, {
   interpolate,
   FadeInDown
 } from 'react-native-reanimated';
-import { MotiView } from 'moti';
 import { Colors } from '../../constants/colors';
 import { useSettingsStore } from '../../store/settingsStore';
 import { triggerHaptic } from '../../utils/haptics';
@@ -113,32 +112,36 @@ export default function HabitCard({
   };
 
   const renderIcon = (name: string | null | undefined, color: string, size = 22) => {
+    if (name && (name.match(/[\p{Emoji}]/u) || name.length <= 2) && name !== 'book' && name !== 'code') {
+      return <Text style={{ fontSize: size - 4 }}>{name}</Text>;
+    }
     switch (name) {
       case 'book': return <Book color={color} size={size} />;
       case 'dumbbell': return <Dumbbell color={color} size={size} />;
       case 'droplets': return <Droplets color={color} size={size} />;
-      case 'brain': return <Brain color={color} size={size} />;
-      case 'pencil': return <Pencil color={color} size={size} />;
       case 'heart': return <Heart color={color} size={size} />;
+      case 'code': return <Code color={color} size={size} />;
+      case 'wallet': return <Wallet color={color} size={size} />;
+      case 'sparkles': return <Sparkles color={color} size={size} />;
+      case 'graduation-cap': return <GraduationCap color={color} size={size} />;
+      case 'activity': return <Activity color={color} size={size} />;
       default: return <BookOpen color={color} size={size} />;
     }
   };
 
   return (
-    <MotiView
-      from={{ opacity: 0, translateY: 20 }}
-      animate={{ opacity: 1, translateY: 0 }}
-      transition={{ type: 'spring', delay: index * 100, damping: 20, stiffness: 100 }}
+    <Animated.View 
+      entering={FadeInDown.delay(index * 100).springify().damping(20).stiffness(100)}
+      style={[animatedCardStyle]}
     >
-      <Animated.View style={[animatedCardStyle]}>
-        <TouchableOpacity 
-          activeOpacity={0.9}
+      <TouchableOpacity 
+        activeOpacity={0.9}
           onPressIn={handlePressIn}
           onPressOut={handlePressOut}
           onLongPress={onLongPress}
           style={[
             styles.card, 
-            { backgroundColor: theme.surface },
+            { backgroundColor: theme.surface + 'E6' },
             isCompleted && !isSelectionMode && { opacity: 0.75 },
             isSelected && { borderColor: theme.primary, borderWidth: 2 },
           isSelectionMode && !isSelected && { opacity: 0.4 }
@@ -199,8 +202,7 @@ export default function HabitCard({
           )}
         </View>
         </TouchableOpacity>
-      </Animated.View>
-    </MotiView>
+    </Animated.View>
   );
 }
 

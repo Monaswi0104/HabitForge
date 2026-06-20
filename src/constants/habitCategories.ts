@@ -15,12 +15,15 @@ export const HABIT_CATEGORIES: Category[] = [
 ];
 
 export const HABIT_ICONS = [
-  { id: 'book', name: 'Study', icon: 'book' },
-  { id: 'dumbbell', name: 'Fitness', icon: 'dumbbell' },
-  { id: 'droplets', name: 'Water', icon: 'droplets' },
-  { id: 'brain', name: 'Mind', icon: 'brain' },
-  { id: 'pencil', name: 'Journal', icon: 'pencil' },
-  { id: 'heart', name: 'Health', icon: 'heart' },
+  { id: 'fitness', name: 'Fitness', icon: 'dumbbell' },
+  { id: 'reading', name: 'Reading', icon: 'book' },
+  { id: 'coding', name: 'Coding', icon: 'code' },
+  { id: 'finance', name: 'Finance', icon: 'wallet' },
+  { id: 'meditation', name: 'Meditation', icon: 'sparkles' },
+  { id: 'study', name: 'Study', icon: 'graduation-cap' },
+  { id: 'health', name: 'Health', icon: 'heart' },
+  { id: 'water', name: 'Water', icon: 'droplets' },
+  { id: 'running', name: 'Running', icon: 'activity' },
 ];
 
 export const HABIT_COLORS = [

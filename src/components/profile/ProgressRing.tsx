@@ -1,15 +1,14 @@
 import React, { useEffect } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet, TextInput } from 'react-native';
 import Svg, { Circle, G } from 'react-native-svg';
 import Animated, {
   useSharedValue,
   useAnimatedProps,
-  withTiming,
-  Easing,
   withSpring
 } from 'react-native-reanimated';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
+const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
 
 interface ProgressRingProps {
   progress: number; // 0 to 100
@@ -49,6 +48,12 @@ export const ProgressRing: React.FC<ProgressRingProps> = ({
     };
   });
 
+  const animatedTextProps = useAnimatedProps(() => {
+    return {
+      text: `${Math.round(animatedProgress.value * 100)}%`
+    } as any;
+  });
+
   return (
     <View style={{ width: halfCircle * 2, height: halfCircle * 2, justifyContent: 'center', alignItems: 'center' }}>
       <Svg
@@ -79,7 +84,11 @@ export const ProgressRing: React.FC<ProgressRingProps> = ({
         </G>
       </Svg>
       <View style={[StyleSheet.absoluteFill, styles.textContainer]}>
-        <Text style={[styles.text, { color: textColor }]}>{Math.round(progress)}%</Text>
+        <AnimatedTextInput
+          editable={false}
+          animatedProps={animatedTextProps}
+          style={[styles.text, { color: textColor }]}
+        />
       </View>
     </View>
   );

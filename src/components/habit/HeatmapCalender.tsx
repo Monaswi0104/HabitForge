@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, StyleSheet, Text, ScrollView } from 'react-native';
+import { View, StyleSheet, ScrollView } from 'react-native';
 import { format, subDays, eachDayOfInterval } from 'date-fns';
 import { useSettingsStore } from '../../store/settingsStore';
 import { Colors } from '../../constants/colors';
+import { MotiView } from 'moti';
 
 interface HeatmapCalendarProps {
   completions: { date: string }[]; // array of 'yyyy-MM-dd' strings
@@ -51,13 +52,15 @@ export default function HeatmapCalendar({ completions, days = 90, color }: Heatm
               const dateStr = format(date, 'yyyy-MM-dd');
               const isCompleted = completedSet.has(dateStr);
               return (
-                <View
+                <MotiView
                   key={`cell-${dateStr}`}
+                  from={{ opacity: 0, scale: 0.5 }}
+                  animate={{ opacity: getOpacityForDate(dateStr), scale: 1 }}
+                  transition={{ type: 'spring', delay: (colIndex * 30) + (rowIndex * 10), damping: 15 }}
                   style={[
                     styles.cell,
                     {
                       backgroundColor: isCompleted ? primaryColor : theme.textSecondary,
-                      opacity: getOpacityForDate(dateStr),
                     },
                   ]}
                 />

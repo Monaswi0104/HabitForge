@@ -4,9 +4,10 @@ import { RootStackScreenProps } from '../types/navigation.types';
 import { useHabitStore } from '../store/habitStore';
 import { useProfileStore } from '../store/profileStore';
 import { Colors } from '../constants/colors';
+import HabitCard from '../components/habit/HabitCard';
 import { Frequency, DayOfWeek } from '../types/habit.types';
 import { executeQuery } from '../database/db';
-import { ArrowLeft, ChevronRight, Book, Dumbbell, Droplets, Brain, Pencil, Heart, Check } from 'lucide-react-native';
+import { ArrowLeft, ChevronRight, Book, Dumbbell, Droplets, Heart, Check, Code, Wallet, Sparkles, GraduationCap, Activity, BookOpen } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { format } from 'date-fns';
@@ -28,10 +29,13 @@ const renderIcon = (name: string, color: string, size = 24) => {
     case 'book': return <Book color={color} size={size} />;
     case 'dumbbell': return <Dumbbell color={color} size={size} />;
     case 'droplets': return <Droplets color={color} size={size} />;
-    case 'brain': return <Brain color={color} size={size} />;
-    case 'pencil': return <Pencil color={color} size={size} />;
     case 'heart': return <Heart color={color} size={size} />;
-    default: return <Book color={color} size={size} />;
+    case 'code': return <Code color={color} size={size} />;
+    case 'wallet': return <Wallet color={color} size={size} />;
+    case 'sparkles': return <Sparkles color={color} size={size} />;
+    case 'graduation-cap': return <GraduationCap color={color} size={size} />;
+    case 'activity': return <Activity color={color} size={size} />;
+    default: return <BookOpen color={color} size={size} />;
   }
 };
 
@@ -45,7 +49,9 @@ export default function CreateHabitModal({ route, navigation }: Props) {
   const [title, setTitle] = useState('');
   const [goal, setGoal] = useState('');
   const [frequency, setFrequency] = useState<Frequency>('daily');
+  const [iconType, setIconType] = useState<'icon'|'emoji'>('icon');
   const [selectedIcon, setSelectedIcon] = useState('book');
+  const [selectedEmoji, setSelectedEmoji] = useState('🔥');
   const [selectedColor, setSelectedColor] = useState(theme.avatarColors[0]);
 
   const [categories, setCategories] = useState<Category[]>([]);
@@ -82,7 +88,7 @@ export default function CreateHabitModal({ route, navigation }: Props) {
       description: goal.trim(),
       frequency,
       color: selectedColor,
-      icon: selectedIcon,
+      icon: iconType === 'emoji' ? selectedEmoji : selectedIcon,
       reminder_time: reminderTime ? reminderTime.toISOString() : undefined,
     }, selectedDays);
 
@@ -112,6 +118,19 @@ export default function CreateHabitModal({ route, navigation }: Props) {
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+
+        {/* Live Preview */}
+        <Text style={[styles.label, { color: theme.textSecondary, marginTop: 0 }]}>Preview</Text>
+        <View pointerEvents="none" style={{ marginBottom: 24 }}>
+          <HabitCard
+            title={title || 'New Habit'}
+            frequency={frequency}
+            isCompleted={false}
+            color={selectedColor}
+            iconName={iconType === 'emoji' ? selectedEmoji : selectedIcon}
+            onToggle={() => {}}
+          />
+        </View>
 
         <Text style={[styles.label, { color: theme.textSecondary, marginTop: 0 }]}>Habit Name</Text>
         <TextInput
@@ -147,34 +166,77 @@ export default function CreateHabitModal({ route, navigation }: Props) {
           })}
         </View>
 
-        <Text style={[styles.label, { color: theme.textSecondary }]}>Icon</Text>
-        <View style={styles.wrapContainer}>
-          {HABIT_ICONS.map(icon => {
-            const isSelected = selectedIcon === icon.icon;
-            return (
-              <TouchableOpacity
-                key={icon.id}
-                style={[
-                  styles.iconBox,
-                  { backgroundColor: isSelected ? theme.primary : theme.surface },
-                  isSelected && { shadowColor: theme.primary, shadowOpacity: 0.3 }
-                ]}
-                onPress={() => {
-                  triggerHaptic('selection');
-                  setSelectedIcon(icon.icon);
-                }}
-              >
-                {renderIcon(icon.icon, isSelected ? '#FFF' : theme.textSecondary, 20)}
-                <Text style={[
-                  styles.iconBoxText,
-                  { color: isSelected ? '#FFF' : theme.textSecondary }
-                ]}>
-                  {icon.name}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
+        <View style={[styles.segmentedControl, { backgroundColor: isDarkMode ? theme.surface : '#F1F5F9', marginBottom: 16 }]}>
+          <TouchableOpacity
+            style={[styles.segmentBtn, iconType === 'icon' && [styles.segmentBtnSelected, { backgroundColor: theme.surface }]]}
+            onPress={() => setIconType('icon')}
+          >
+            <Text style={[styles.segmentText, { color: iconType === 'icon' ? theme.text : theme.textSecondary, fontWeight: iconType === 'icon' ? '600' : '500' }]}>
+              Choose Icon
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.segmentBtn, iconType === 'emoji' && [styles.segmentBtnSelected, { backgroundColor: theme.surface }]]}
+            onPress={() => setIconType('emoji')}
+          >
+            <Text style={[styles.segmentText, { color: iconType === 'emoji' ? theme.text : theme.textSecondary, fontWeight: iconType === 'emoji' ? '600' : '500' }]}>
+              Use Emoji
+            </Text>
+          </TouchableOpacity>
         </View>
+
+        {iconType === 'icon' ? (
+          <View style={styles.wrapContainer}>
+            {HABIT_ICONS.map(icon => {
+              const isSelected = selectedIcon === icon.icon;
+              return (
+                <TouchableOpacity
+                  key={icon.id}
+                  style={[
+                    styles.iconBox,
+                    { backgroundColor: isSelected ? theme.primary : theme.surface },
+                    isSelected && { shadowColor: theme.primary, shadowOpacity: 0.3 }
+                  ]}
+                  onPress={() => {
+                    triggerHaptic('selection');
+                    setSelectedIcon(icon.icon);
+                  }}
+                >
+                  {renderIcon(icon.icon, isSelected ? '#FFF' : theme.textSecondary, 20)}
+                  <Text style={[
+                    styles.iconBoxText,
+                    { color: isSelected ? '#FFF' : theme.textSecondary }
+                  ]}>
+                    {icon.name}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        ) : (
+          <View style={{ alignItems: 'flex-start' }}>
+            <TextInput
+              style={[styles.emojiInput, { backgroundColor: theme.surface, color: theme.text, borderColor: theme.primary }]}
+              value={selectedEmoji}
+              onChangeText={(text) => {
+                // Ensure only 1-2 characters (emoji) are kept
+                if (text.length > 0) {
+                  // get the last character/emoji entered
+                  const arr = Array.from(text);
+                  setSelectedEmoji(arr[arr.length - 1]);
+                } else {
+                  setSelectedEmoji('');
+                }
+              }}
+              placeholder="🔥"
+              placeholderTextColor={theme.textSecondary}
+              maxLength={4} // Some emojis use multiple characters
+            />
+            <Text style={{ fontSize: 13, color: theme.textSecondary, marginTop: 8 }}>
+              Type any single emoji here
+            </Text>
+          </View>
+        )}
 
         <Text style={[styles.label, { color: theme.textSecondary }]}>Color</Text>
         <View style={styles.wrapContainer}>
@@ -402,6 +464,14 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  emojiInput: {
+    fontSize: 48,
+    width: 80,
+    height: 80,
+    textAlign: 'center',
+    borderRadius: 24,
+    borderWidth: 2,
   },
   segmentedControl: {
     flexDirection: 'row',

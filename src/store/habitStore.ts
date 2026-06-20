@@ -13,6 +13,7 @@ const generateId = () => {
 interface HabitState {
   habits: Habit[];
   completions: Completion[];
+  habitDays: HabitDay[];
   isLoading: boolean;
   error: string | null;
   loadHabits: (profileId: string) => Promise<void>;
@@ -28,6 +29,7 @@ interface HabitState {
 export const useHabitStore = create<HabitState>((set, get) => ({
   habits: [],
   completions: [],
+  habitDays: [],
   isLoading: false,
   error: null,
 
@@ -44,7 +46,13 @@ export const useHabitStore = create<HabitState>((set, get) => ({
         WHERE h.profile_id = ?
       `, [profileId]);
 
-      set({ habits, completions, isLoading: false });
+      const habitDays = await executeQuery<HabitDay>(`
+        SELECT hd.* FROM habit_days hd
+        JOIN habits h ON hd.habit_id = h.id
+        WHERE h.profile_id = ?
+      `, [profileId]);
+
+      set({ habits, completions, habitDays, isLoading: false });
     } catch (e: any) {
       set({ error: e.message, isLoading: false });
       console.error('Failed to load habits:', e);
@@ -75,12 +83,15 @@ export const useHabitStore = create<HabitState>((set, get) => ({
       );
 
       // Insert habit days if applicable
+      const newHabitDays: HabitDay[] = [];
       if (newHabit.frequency === 'weekly' && selectedDays && selectedDays.length > 0) {
         for (const day of selectedDays) {
+          const hd: HabitDay = { id: generateId(), habit_id: newHabit.id, day };
           await executeMutation(
             `INSERT INTO habit_days (id, habit_id, day) VALUES (?, ?, ?)`,
-            [generateId(), newHabit.id, day]
+            [hd.id, hd.habit_id, hd.day]
           );
+          newHabitDays.push(hd);
         }
       }
 
@@ -97,6 +108,7 @@ export const useHabitStore = create<HabitState>((set, get) => ({
 
       set((state) => ({ 
         habits: [...state.habits, newHabit],
+        habitDays: [...state.habitDays, ...newHabitDays],
         isLoading: false 
       }));
     } catch (e: any) {
