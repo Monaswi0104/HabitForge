@@ -6,8 +6,10 @@ import Animated, {
   useAnimatedStyle, 
   withSpring,
   interpolateColor,
+  interpolate,
   FadeInDown
 } from 'react-native-reanimated';
+import { MotiView } from 'moti';
 import { Colors } from '../../constants/colors';
 import { useSettingsStore } from '../../store/settingsStore';
 import { triggerHaptic } from '../../utils/haptics';
@@ -84,11 +86,17 @@ export default function HabitCard({
       [theme.border, accentColor]
     );
 
+    const scaleValue = interpolate(
+      progress.value,
+      [0, 0.5, 1],
+      [1, 1.3, 1]
+    );
+
     return {
       backgroundColor,
       borderColor,
       transform: [
-        { scale: isCompleted ? withSpring(1.1) : withSpring(1) }
+        { scale: scaleValue as any }
       ]
     };
   });
@@ -117,17 +125,22 @@ export default function HabitCard({
   };
 
   return (
-    <Animated.View style={[animatedCardStyle]}>
-      <TouchableOpacity 
-        activeOpacity={0.9}
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
-        onLongPress={onLongPress}
-        style={[
-          styles.card, 
-          { backgroundColor: theme.surface },
-          isCompleted && !isSelectionMode && { opacity: 0.75 },
-          isSelected && { borderColor: theme.primary, borderWidth: 2 },
+    <MotiView
+      from={{ opacity: 0, translateY: 20 }}
+      animate={{ opacity: 1, translateY: 0 }}
+      transition={{ type: 'spring', delay: index * 100, damping: 20, stiffness: 100 }}
+    >
+      <Animated.View style={[animatedCardStyle]}>
+        <TouchableOpacity 
+          activeOpacity={0.9}
+          onPressIn={handlePressIn}
+          onPressOut={handlePressOut}
+          onLongPress={onLongPress}
+          style={[
+            styles.card, 
+            { backgroundColor: theme.surface },
+            isCompleted && !isSelectionMode && { opacity: 0.75 },
+            isSelected && { borderColor: theme.primary, borderWidth: 2 },
           isSelectionMode && !isSelected && { opacity: 0.4 }
         ]}
       >
@@ -185,8 +198,9 @@ export default function HabitCard({
             </>
           )}
         </View>
-      </TouchableOpacity>
-    </Animated.View>
+        </TouchableOpacity>
+      </Animated.View>
+    </MotiView>
   );
 }
 

@@ -5,6 +5,7 @@ import { useHabitStore } from '../store/habitStore';
 import { useProfileStore } from '../store/profileStore';
 import { Colors } from '../constants/colors';
 import HabitCard from '../components/habit/HabitCard';
+import { ProgressRing } from '../components/profile/ProgressRing';
 import { format } from 'date-fns';
 import { calculateStreak } from '../utils/streakCalculator';
 import { executeQuery } from '../database/db';
@@ -189,17 +190,16 @@ export default function HomeScreen({ navigation }: any) {
             {/* Summary Cards Row */}
             <View style={styles.summaryRow}>
               {/* Progress Card */}
-              <View style={[styles.summaryCard, { backgroundColor: theme.primary }]}>
-                <View style={styles.summaryCardHeader}>
-                  <View style={styles.summaryIconCircle}>
-                    <CheckCircle2 color="#FFF" size={18} />
-                  </View>
-                  <Text style={styles.summaryPercent}>{progressPercent}%</Text>
-                </View>
-                <View style={styles.summaryBarBg}>
-                  <View style={[styles.summaryBarFill, { width: `${progressPercent}%` }]} />
-                </View>
-                <Text style={styles.summaryLabel}>
+              <View style={[styles.summaryCard, { backgroundColor: theme.primary, alignItems: 'center', justifyContent: 'center' }]}>
+                <ProgressRing 
+                  progress={progressPercent} 
+                  radius={32} 
+                  strokeWidth={6} 
+                  color="#FFF" 
+                  backgroundColor="rgba(255,255,255,0.2)" 
+                  textColor="#FFF" 
+                />
+                <Text style={[styles.summaryLabel, { marginTop: 12, textAlign: 'center' }]}>
                   {completedCount}/{totalCount} Done
                 </Text>
               </View>

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   StyleSheet,
@@ -6,6 +6,7 @@ import {
   useColorScheme,
   Alert,
 } from 'react-native';
+import { MotiView } from 'moti';
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -31,32 +32,37 @@ const Tab = createBottomTabNavigator<MainTabParamList>();
 
 const AddPlaceholder = () => null;
 
-function CustomTabBarButton({
-  onPress,
-}: {
-  onPress?: (e?: any) => void;
-}) {
+function CustomTabBarButton({ children, onPress }: any) {
   const isDark = useSettingsStore((state: any) => state.isDarkMode);
   const theme = isDark ? Colors.dark : Colors.light;
+  const [isPressed, setIsPressed] = useState(false);
 
   return (
     <TouchableOpacity
       activeOpacity={0.9}
       style={styles.fabContainer}
       onPress={onPress}
+      onPressIn={() => setIsPressed(true)}
+      onPressOut={() => setIsPressed(false)}
     >
-      <View
-        style={[
-          styles.fab,
-          { backgroundColor: theme.primary },
-        ]}
+      <MotiView
+        from={{ scale: 1 }}
+        animate={{ scale: isPressed ? 0.9 : 1 }}
+        transition={{ type: 'spring', damping: 15 }}
       >
-        <Plus
-          color="#FFF"
-          size={30}
-          strokeWidth={2.8}
-        />
-      </View>
+        <View
+          style={[
+            styles.fab,
+            { backgroundColor: theme.primary },
+          ]}
+        >
+          <Plus
+            color="#FFF"
+            size={30}
+            strokeWidth={2.8}
+          />
+        </View>
+      </MotiView>
     </TouchableOpacity>
   );
 }

@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Flame } from 'lucide-react-native';
+import { MotiView } from 'moti';
 import Animated, { 
   useSharedValue, 
   useAnimatedStyle, 
@@ -59,11 +60,16 @@ export default function StreakFlame({ streakCount }: StreakFlameProps) {
   };
 
   return (
-    <View style={styles.container}>
+    <MotiView
+      from={{ scale: 0, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      transition={{ type: 'spring', damping: 12, stiffness: 100 }}
+      style={styles.container}
+    >
       <Animated.View style={animatedStyle}>
         <Flame color={getFlameColor()} size={20} fill={streakCount > 0 ? getFlameColor() : 'transparent'} />
       </Animated.View>
-    </View>
+    </MotiView>
   );
 }
 
