@@ -42,7 +42,7 @@ No subscriptions. No cloud syncing delays. No ads. Just you and the forge.
       <td align="center"><b>Profile Select</b><br><img src="./src/assets/screenshots/profile_select_screen.png" width="220" /></td>
       <td align="center"><b>Profile Stats</b><br><img src="./src/assets/screenshots/profile_screen.png" width="220" /></td>
       <td align="center"><b>Settings</b><br><img src="./src/assets/screenshots/settings_screen.png" width="220" /></td>
-      <td align="center"></td>
+      <td align="center"><b>Splash Screen</b><br><img src="./src/assets/screenshots/splash_screen.png" width="220" /></td>
     </tr>
   </table>
 </div>
